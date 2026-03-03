@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { renderToString } from 'react-dom/server';
 import { BackgroundOrbs } from './components/BackgroundOrbs';
 import { Header } from './components/Header';
 import * as Icons from 'lucide-react';
@@ -111,6 +112,32 @@ function App() {
       .then(data => setConfig(data))
       .catch(err => console.error("Failed to load config", err));
   }, []);
+
+  // Update Document Title and Favicon based on Config
+  useEffect(() => {
+    if (config) {
+      document.title = config.serverName || "BrayServer";
+
+      try {
+        const IconComp = config.serverIcon ? ((Icons as any)[config.serverIcon] || Icons.Server) : Icons.Server;
+        // Render the lucide SVG element to a string and encode it for a Data URI
+        const svgString = renderToString(<IconComp size={32} color="white" />);
+        const encodedSvg = encodeURIComponent(svgString);
+        const dataUri = `data:image/svg+xml,${encodedSvg}`;
+
+        let link: HTMLLinkElement | null = document.querySelector("link[rel~='icon']");
+        if (!link) {
+          link = document.createElement('link');
+          link.rel = 'icon';
+          document.head.appendChild(link);
+        }
+        link.href = dataUri;
+        link.type = "image/svg+xml";
+      } catch (err) {
+        console.warn("Could not set dynamic favicon", err);
+      }
+    }
+  }, [config]);
 
   if (!config) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading Dashboard Data...</div>;
 
