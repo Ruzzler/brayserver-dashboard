@@ -1,8 +1,6 @@
-version: '3.8'
-
 services:
   brayserver-dashboard:
-    image: ghcr.io/Ruzzler/brayserver-dashboard:latest
+    image: ghcr.io/ruzzler/brayserver-dashboard:latest
     container_name: BrayServer-Dashboard
     restart: unless-stopped
     ports:
