@@ -12,7 +12,25 @@ document.addEventListener('DOMContentLoaded', () => {
     updateClock();
     setInterval(updateClock, 1000);
 
-    // 2. Fetch Status for Apps
+    // 2. Fetch System Stats
+    async function fetchSystemStats() {
+        try {
+            const response = await fetch('/api/system/status');
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById('cpu-val').textContent = data.cpu || '--%';
+                document.getElementById('ram-val').textContent = data.ram || '--%';
+                document.getElementById('disk-val').textContent = data.disk || '--%';
+            }
+        } catch (error) {
+            console.error('Error fetching system stats:', error);
+        }
+    }
+
+    fetchSystemStats();
+    setInterval(fetchSystemStats, 10000); // Check every 10 seconds
+
+    // 3. Fetch Status for Apps
     const cards = document.querySelectorAll('.card');
 
     cards.forEach(card => {
@@ -106,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 3. Theme Toggle Logic
+    // 4. Theme Toggle Logic
     const themeToggleBtn = document.getElementById('themeToggle');
     const themeIcon = themeToggleBtn.querySelector('i');
 
@@ -132,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 4. Advanced Card Interactivity (3D Tilt & Glow)
+    // 5. Advanced Card Interactivity (3D Tilt & Glow)
     cards.forEach(card => {
         // Glow tracking
         card.addEventListener('mousemove', e => {

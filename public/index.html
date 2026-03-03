@@ -23,8 +23,10 @@
         <header class="header">
             <div>
                 <h1>
-                    <img src="logo.png" alt="BrayServer Logo" class="logo-img">
-                    BrayServer
+                    <div class="logo-container">
+                        <i class="fas fa-server logo-icon"></i>
+                    </div>
+                    <span>BrayServer</span>
                 </h1>
                 <p class="subtitle">Home Server & App Dashboard</p>
             </div>
@@ -33,6 +35,12 @@
                     <i class="fas fa-moon"></i>
                 </button>
                 <div class="header-status">
+                    <div class="system-stats-header" id="system-stats">
+                        <span class="sys-stat-header"><i class="fas fa-microchip"></i> <span
+                                id="cpu-val">--%</span></span>
+                        <span class="sys-stat-header"><i class="fas fa-memory"></i> <span id="ram-val">--%</span></span>
+                        <span class="sys-stat-header"><i class="fas fa-hdd"></i> <span id="disk-val">--%</span></span>
+                    </div>
                     <div class="status-indicator">
                         <span class="dot pulse"></span> Server Online
                     </div>
@@ -45,180 +53,200 @@
             </div>
         </header>
 
-        <main class="grid-container" id="app-grid">
-            <!-- Cards will be populated dynamically or statically based on JS logic -->
-            <!-- Placeholder for visual testing -->
-            <a href="http://192.168.0.100:8989" target="_blank" class="card" data-app="sonarr">
-                <div class="card-icon"><img src="https://dashy.to/icons/sonarr.png" alt="Sonarr"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><i
-                        class="fas fa-tv" style="display:none;"></i></div>
-                <div class="card-content">
-                    <h3>Sonarr</h3>
-                    <p class="status-text unknown">Checking...</p>
-                </div>
-                <div class="card-badge"></div>
-            </a>
+        <main class="dashboard-content">
 
-            <a href="http://192.168.0.100:7878" target="_blank" class="card" data-app="radarr">
-                <div class="card-icon"><img src="https://dashy.to/icons/radarr.png" alt="Radarr"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><i
-                        class="fas fa-film" style="display:none;"></i></div>
-                <div class="card-content">
-                    <h3>Radarr</h3>
-                    <p class="status-text unknown">Checking...</p>
-                </div>
-            </a>
 
-            <a href="http://192.168.0.100:5055" target="_blank" class="card" data-app="overseerr">
-                <div class="card-icon"><img src="https://dashy.to/icons/overseerr.png" alt="Overseerr"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><i
-                        class="fas fa-eye" style="display:none;"></i></div>
-                <div class="card-content">
-                    <h3>Overseerr</h3>
-                    <p class="status-text unknown">Checking...</p>
-                </div>
-            </a>
+            <!-- Main App Categories -->
+            <div class="categories-area" id="app-grid">
+                <!-- Media Delivery -->
+                <section class="category">
+                    <h2 class="category-title">Media Delivery</h2>
+                    <div class="grid-container">
+                        <a href="http://192.168.0.100:32400/web" target="_blank" class="card" data-app="plex">
+                            <div class="card-icon"><img src="https://dashy.to/icons/plex.png" alt="Plex"
+                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><i
+                                    class="fas fa-play-circle" style="display:none;"></i></div>
+                            <div class="card-content">
+                                <h3>Plex</h3>
+                                <p class="status-text unknown">Checking...</p>
+                            </div>
+                        </a>
+                        <a href="http://192.168.0.100:8181" target="_blank" class="card" data-app="tautulli">
+                            <div class="card-icon"><img src="https://dashy.to/icons/tautulli.png" alt="Tautulli"
+                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><i
+                                    class="fas fa-chart-bar" style="display:none;"></i></div>
+                            <div class="card-content">
+                                <h3>Tautulli</h3>
+                                <p class="status-text unknown">Checking...</p>
+                            </div>
+                        </a>
+                        <a href="http://192.168.0.100:13378" target="_blank" class="card" data-app="audiobookshelf">
+                            <div class="card-icon"><img src="https://dashy.to/icons/audiobookshelf.png"
+                                    alt="Audiobookshelf"
+                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><i
+                                    class="fas fa-book" style="display:none;"></i></div>
+                            <div class="card-content">
+                                <h3>Audiobookshelf</h3>
+                                <p class="status-text unknown">Checking...</p>
+                            </div>
+                        </a>
+                    </div>
+                </section>
 
-            <a href="http://192.168.0.100:32400/web" target="_blank" class="card" data-app="plex">
-                <div class="card-icon"><img src="https://dashy.to/icons/plex.png" alt="Plex"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><i
-                        class="fas fa-play-circle" style="display:none;"></i></div>
-                <div class="card-content">
-                    <h3>Plex</h3>
-                    <p class="status-text unknown">Checking...</p>
-                </div>
-            </a>
+                <!-- Media Management -->
+                <section class="category">
+                    <h2 class="category-title">Media Management</h2>
+                    <div class="grid-container">
+                        <a href="http://192.168.0.100:8989" target="_blank" class="card" data-app="sonarr">
+                            <div class="card-icon"><img src="https://dashy.to/icons/sonarr.png" alt="Sonarr"
+                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><i
+                                    class="fas fa-tv" style="display:none;"></i></div>
+                            <div class="card-content">
+                                <h3>Sonarr</h3>
+                                <p class="status-text unknown">Checking...</p>
+                            </div>
+                        </a>
+                        <a href="http://192.168.0.100:7878" target="_blank" class="card" data-app="radarr">
+                            <div class="card-icon"><img src="https://dashy.to/icons/radarr.png" alt="Radarr"
+                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><i
+                                    class="fas fa-film" style="display:none;"></i></div>
+                            <div class="card-content">
+                                <h3>Radarr</h3>
+                                <p class="status-text unknown">Checking...</p>
+                            </div>
+                        </a>
+                        <a href="http://192.168.0.100:5055" target="_blank" class="card" data-app="overseerr">
+                            <div class="card-icon"><img src="https://dashy.to/icons/overseerr.png" alt="Overseerr"
+                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><i
+                                    class="fas fa-eye" style="display:none;"></i></div>
+                            <div class="card-content">
+                                <h3>Overseerr</h3>
+                                <p class="status-text unknown">Checking...</p>
+                            </div>
+                        </a>
+                        <a href="http://192.168.0.100:9696" target="_blank" class="card" data-app="prowlarr">
+                            <div class="card-icon"><img src="https://dashy.to/icons/prowlarr.png" alt="Prowlarr"
+                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><i
+                                    class="fas fa-search" style="display:none;"></i></div>
+                            <div class="card-content">
+                                <h3>Prowlarr</h3>
+                                <p class="status-text unknown">Checking...</p>
+                            </div>
+                        </a>
+                    </div>
+                </section>
 
-            <a href="http://homeassistant.local:8123" target="_blank" class="card" data-app="homeassistant">
-                <div class="card-icon"><img src="https://dashy.to/icons/home-assistant.png" alt="Home Assistant"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><i
-                        class="fas fa-home" style="display:none;"></i></div>
-                <div class="card-content">
-                    <h3>Home Assistant</h3>
-                    <p class="status-text unknown">Checking...</p>
-                </div>
-            </a>
+                <!-- Downloaders -->
+                <section class="category">
+                    <h2 class="category-title">Downloaders</h2>
+                    <div class="grid-container">
+                        <a href="http://192.168.0.100:8080" target="_blank" class="card" data-app="qbittorrent">
+                            <div class="card-icon"><img src="https://dashy.to/icons/qbittorrent.png" alt="qBittorrent"
+                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><i
+                                    class="fas fa-download" style="display:none;"></i></div>
+                            <div class="card-content">
+                                <h3>qBittorrent</h3>
+                                <p class="status-text unknown">Checking...</p>
+                            </div>
+                        </a>
+                        <a href="http://192.168.0.100:8282" target="_blank" class="card" data-app="sabnzbd">
+                            <div class="card-icon"><img src="https://dashy.to/icons/sabnzbd.png" alt="SABnzbd"
+                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><i
+                                    class="fas fa-download" style="display:none;"></i></div>
+                            <div class="card-content">
+                                <h3>SABnzbd</h3>
+                                <p class="status-text unknown">Checking...</p>
+                            </div>
+                        </a>
+                        <a href="http://192.168.0.100:9091" target="_blank" class="card" data-app="transmission">
+                            <div class="card-icon"><img src="https://dashy.to/icons/transmission.png" alt="Transmission"
+                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><i
+                                    class="fas fa-download" style="display:none;"></i></div>
+                            <div class="card-content">
+                                <h3>Transmission</h3>
+                                <p class="status-text unknown">Checking...</p>
+                            </div>
+                        </a>
+                        <a href="http://192.168.0.100:8081" target="_blank" class="card" data-app="metube">
+                            <div class="card-icon"><i class="fab fa-youtube"></i></div>
+                            <div class="card-content">
+                                <h3>MeTube</h3>
+                                <p class="status-text unknown">Checking...</p>
+                            </div>
+                        </a>
+                    </div>
+                </section>
 
-            <a href="http://192.168.0.100:3000" target="_blank" class="card" data-app="adguard">
-                <div class="card-icon"><img src="https://dashy.to/icons/adguard-home.png" alt="AdGuard"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><i
-                        class="fas fa-shield-alt" style="display:none;"></i></div>
-                <div class="card-content">
-                    <h3>AdGuard Home</h3>
-                    <p class="status-text unknown">Checking...</p>
-                </div>
-            </a>
+                <!-- Home & Infrastructure -->
+                <section class="category">
+                    <h2 class="category-title">Home & Infrastructure</h2>
+                    <div class="grid-container">
+                        <a href="http://homeassistant.local:8123" target="_blank" class="card" data-app="homeassistant">
+                            <div class="card-icon"><img src="https://dashy.to/icons/home-assistant.png"
+                                    alt="Home Assistant"
+                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><i
+                                    class="fas fa-home" style="display:none;"></i></div>
+                            <div class="card-content">
+                                <h3>Home Assistant</h3>
+                                <p class="status-text unknown">Checking...</p>
+                            </div>
+                        </a>
+                        <a href="http://192.168.0.100:3000" target="_blank" class="card" data-app="adguard">
+                            <div class="card-icon"><img src="https://dashy.to/icons/adguard-home.png" alt="AdGuard"
+                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><i
+                                    class="fas fa-shield-alt" style="display:none;"></i></div>
+                            <div class="card-content">
+                                <h3>AdGuard Home</h3>
+                                <p class="status-text unknown">Checking...</p>
+                            </div>
+                        </a>
+                        <a href="http://192.168.0.100:3001" target="_blank" class="card" data-app="uptimekuma">
+                            <div class="card-icon"><img src="https://dashy.to/icons/uptime-kuma.png" alt="Uptime Kuma"
+                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><i
+                                    class="fas fa-heartbeat" style="display:none;"></i></div>
+                            <div class="card-content">
+                                <h3>Uptime Kuma</h3>
+                                <p class="status-text unknown">Checking...</p>
+                            </div>
+                        </a>
+                        <a href="http://192.168.0.100:88" target="_blank" class="card" data-app="speedtest">
+                            <div class="card-icon"><i class="fas fa-tachometer-alt"></i></div>
+                            <div class="card-content">
+                                <h3>Speedtest Tracker</h3>
+                                <p class="status-text unknown">Checking...</p>
+                            </div>
+                        </a>
+                    </div>
+                </section>
 
-            <a href="http://192.168.0.100:8080" target="_blank" class="card" data-app="qbittorrent">
-                <div class="card-icon"><img src="https://dashy.to/icons/qbittorrent.png" alt="qBittorrent"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><i
-                        class="fas fa-download" style="display:none;"></i></div>
-                <div class="card-content">
-                    <h3>qBittorrent</h3>
-                    <p class="status-text unknown">Checking...</p>
-                </div>
-            </a>
-
-            <!-- New additions -->
-            <a href="http://192.168.0.100:7171" target="_blank" class="card" data-app="agregarr">
-                <div class="card-icon"><i class="fas fa-robot"></i></div>
-                <div class="card-content">
-                    <h3>agregarr</h3>
-                    <p class="status-text unknown">Checking...</p>
-                </div>
-            </a>
-
-            <a href="http://192.168.0.100:13378" target="_blank" class="card" data-app="audiobookshelf">
-                <div class="card-icon"><img src="https://dashy.to/icons/audiobookshelf.png" alt="Audiobookshelf"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><i
-                        class="fas fa-book" style="display:none;"></i></div>
-                <div class="card-content">
-                    <h3>Audiobookshelf</h3>
-                    <p class="status-text unknown">Checking...</p>
-                </div>
-            </a>
-
-            <a href="http://192.168.0.100:8191" target="_blank" class="card" data-app="flaresolverr">
-                <div class="card-icon"><i class="fas fa-fire"></i></div>
-                <div class="card-content">
-                    <h3>Flaresolverr</h3>
-                    <p class="status-text unknown">Checking...</p>
-                </div>
-            </a>
-
-            <a href="http://192.168.0.100:6080" target="_blank" class="card" data-app="krusader">
-                <div class="card-icon"><i class="fas fa-folder-open"></i></div>
-                <div class="card-content">
-                    <h3>Krusader</h3>
-                    <p class="status-text unknown">Checking...</p>
-                </div>
-            </a>
-
-            <a href="http://192.168.0.100:8081" target="_blank" class="card" data-app="metube">
-                <div class="card-icon"><i class="fab fa-youtube"></i></div>
-                <div class="card-content">
-                    <h3>MeTube</h3>
-                    <p class="status-text unknown">Checking...</p>
-                </div>
-            </a>
-
-            <a href="http://192.168.0.100:9696" target="_blank" class="card" data-app="prowlarr">
-                <div class="card-icon"><img src="https://dashy.to/icons/prowlarr.png" alt="Prowlarr"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><i
-                        class="fas fa-search" style="display:none;"></i></div>
-                <div class="card-content">
-                    <h3>Prowlarr</h3>
-                    <p class="status-text unknown">Checking...</p>
-                </div>
-            </a>
-
-            <a href="http://192.168.0.100:8282" target="_blank" class="card" data-app="sabnzbd">
-                <div class="card-icon"><img src="https://dashy.to/icons/sabnzbd.png" alt="SABnzbd"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><i
-                        class="fas fa-download" style="display:none;"></i></div>
-                <div class="card-content">
-                    <h3>SABnzbd</h3>
-                    <p class="status-text unknown">Checking...</p>
-                </div>
-            </a>
-
-            <a href="http://192.168.0.100:88" target="_blank" class="card" data-app="speedtest">
-                <div class="card-icon"><i class="fas fa-tachometer-alt"></i></div>
-                <div class="card-content">
-                    <h3>Speedtest Tracker</h3>
-                    <p class="status-text unknown">Checking...</p>
-                </div>
-            </a>
-
-            <a href="http://192.168.0.100:8181" target="_blank" class="card" data-app="tautulli">
-                <div class="card-icon"><img src="https://dashy.to/icons/tautulli.png" alt="Tautulli"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><i
-                        class="fas fa-chart-bar" style="display:none;"></i></div>
-                <div class="card-content">
-                    <h3>Tautulli</h3>
-                    <p class="status-text unknown">Checking...</p>
-                </div>
-            </a>
-
-            <a href="http://192.168.0.100:9091" target="_blank" class="card" data-app="transmission">
-                <div class="card-icon"><img src="https://dashy.to/icons/transmission.png" alt="Transmission"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><i
-                        class="fas fa-download" style="display:none;"></i></div>
-                <div class="card-content">
-                    <h3>Transmission</h3>
-                    <p class="status-text unknown">Checking...</p>
-                </div>
-            </a>
-
-            <a href="http://192.168.0.100:3001" target="_blank" class="card" data-app="uptimekuma">
-                <div class="card-icon"><img src="https://dashy.to/icons/uptime-kuma.png" alt="Uptime Kuma"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><i
-                        class="fas fa-heartbeat" style="display:none;"></i></div>
-                <div class="card-content">
-                    <h3>Uptime Kuma</h3>
-                    <p class="status-text unknown">Checking...</p>
-                </div>
-            </a>
+                <!-- Tools & Utilities -->
+                <section class="category">
+                    <h2 class="category-title">Tools & Utilities</h2>
+                    <div class="grid-container">
+                        <a href="http://192.168.0.100:6080" target="_blank" class="card" data-app="krusader">
+                            <div class="card-icon"><i class="fas fa-folder-open"></i></div>
+                            <div class="card-content">
+                                <h3>Krusader</h3>
+                                <p class="status-text unknown">Checking...</p>
+                            </div>
+                        </a>
+                        <a href="http://192.168.0.100:8191" target="_blank" class="card" data-app="flaresolverr">
+                            <div class="card-icon"><i class="fas fa-fire"></i></div>
+                            <div class="card-content">
+                                <h3>Flaresolverr</h3>
+                                <p class="status-text unknown">Checking...</p>
+                            </div>
+                        </a>
+                        <a href="http://192.168.0.100:7171" target="_blank" class="card" data-app="agregarr">
+                            <div class="card-icon"><i class="fas fa-robot"></i></div>
+                            <div class="card-content">
+                                <h3>agregarr</h3>
+                                <p class="status-text unknown">Checking...</p>
+                            </div>
+                        </a>
+                    </div>
+                </section>
+            </div>
         </main>
     </div>
 
