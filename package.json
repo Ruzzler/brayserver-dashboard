@@ -1,6 +1,6 @@
 {
   "name": "brayserver-dashboard",
-  "version": "1.0.0",
+  "version": "0.1.0-alpha.1",
   "description": "Custom landing page for Unraid server",
   "main": "server.js",
   "scripts": {
