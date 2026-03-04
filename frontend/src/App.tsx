@@ -4,6 +4,7 @@ import { BackgroundOrbs } from './components/BackgroundOrbs';
 import { Header } from './components/Header';
 import * as Icons from 'lucide-react';
 import { formatIconName } from './lib/utils';
+import { WeatherWidget } from './components/WeatherWidget';
 
 interface AppItem {
   id: string;
@@ -24,11 +25,15 @@ interface Config {
   serverName: string;
   serverIcon?: string;
   headerLayout?: "classic" | "minimalist" | "split" | "sidebar";
+  appCardStyle?: "glass" | "solid" | "outline";
+  enableWeather?: boolean;
+  weatherLocation?: string;
+  weatherUnit?: string;
   categories: Category[];
   apps: AppItem[];
 }
 
-function AppCard({ app }: { app: AppItem }) {
+function AppCard({ app, style = 'glass' }: { app: AppItem, style?: string }) {
   const [isOnline, setIsOnline] = useState<boolean | null>(null);
   const [stats, setStats] = useState<any[] | null>(null);
 
@@ -71,12 +76,30 @@ function AppCard({ app }: { app: AppItem }) {
     iconElement = <IconComp className="w-8 h-8 text-muted-foreground transition-transform duration-300 group-hover:scale-110 group-hover:text-foreground" />;
   }
 
-  return (
-    <a href={app.url} target="_blank" rel="noreferrer" className="group relative bg-card/40 border border-border/50 rounded-2xl p-6 flex items-center gap-5 backdrop-blur-xl transition-all duration-500 hover:bg-card/80 hover:border-border hover:shadow-2xl hover:-translate-y-1 overflow-hidden cursor-pointer no-underline">
-      {/* Light sweep effect */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] pointer-events-none"></div>
+  const baseClasses = "group relative rounded-2xl p-6 flex items-center gap-5 transition-all duration-500 overflow-hidden cursor-pointer no-underline";
 
-      <div className="w-14 h-14 flex items-center justify-center bg-background/50 border border-border/50 shadow-inner rounded-xl flex-shrink-0 relative z-10 transition-colors duration-300 group-hover:bg-background/80">
+  const styleClasses = {
+    glass: "bg-card/40 border border-border/50 backdrop-blur-xl hover:bg-card/80 hover:border-border hover:shadow-2xl hover:-translate-y-1",
+    solid: "bg-card border border-border hover:bg-muted hover:border-foreground/20 shadow-sm hover:shadow-md hover:-translate-y-1",
+    outline: "bg-transparent border-2 border-border/50 hover:border-primary hover:bg-primary/5 hover:-translate-y-1"
+  };
+
+  const currentStyleClass = styleClasses[style as keyof typeof styleClasses] || styleClasses.glass;
+
+  const iconBase = "w-14 h-14 flex items-center justify-center rounded-xl flex-shrink-0 relative z-10 transition-colors duration-300";
+  const iconStyle = {
+    glass: "bg-background/50 border border-border/50 shadow-inner group-hover:bg-background/80",
+    solid: "bg-muted border border-border shadow-sm group-hover:bg-card",
+    outline: "bg-card/50 border border-border/50 group-hover:bg-primary/10"
+  };
+  const currentIconStyle = iconStyle[style as keyof typeof iconStyle] || iconStyle.glass;
+
+  return (
+    <a href={app.url} target="_blank" rel="noreferrer" className={`${baseClasses} ${currentStyleClass}`}>
+      {/* Light sweep effect */}
+      {style === 'glass' && <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] pointer-events-none"></div>}
+
+      <div className={`${iconBase} ${currentIconStyle}`}>
         {iconElement}
       </div>
       <div className="flex flex-col gap-1 relative z-10 w-full">
@@ -166,6 +189,11 @@ function App() {
       <div className="relative z-10 w-full min-h-screen">
         <div className="max-w-7xl mx-auto px-8 py-12">
           <Header config={config} onSaveConfig={handleSaveConfig} />
+
+          {config.enableWeather && config.weatherLocation && (
+            <WeatherWidget location={config.weatherLocation} unit={config.weatherUnit || 'F'} />
+          )}
+
           <main className="w-full">
             <div className="flex flex-col gap-12">
               {sortedCategories.map(cat => {
@@ -177,7 +205,7 @@ function App() {
                     <h2 className="text-xl font-semibold text-muted-foreground border-b border-border pb-2">{cat.name}</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                       {categoryApps.map(app => (
-                        <AppCard key={app.id} app={app} />
+                        <AppCard key={app.id} app={app} style={config.appCardStyle} />
                       ))}
                     </div>
                   </section>

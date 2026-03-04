@@ -17,9 +17,7 @@ RUN npm ci --production
 # Copy backend logic
 COPY backend/server.js ./backend/
 
-# Pre-create config.json if it doesn't exist so Unraid can map it cleanly.
-# If Unraid maps a file here, this gets overwritten by the volume mount.
-COPY config.json ./
+# Config will be generated automatically or mounted via volume
 
 # Copy built frontend assets from Stage 1
 COPY --from=frontend-builder /app/frontend/dist ./frontend/dist

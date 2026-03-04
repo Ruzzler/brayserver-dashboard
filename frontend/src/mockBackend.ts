@@ -4,6 +4,10 @@ let mockConfig = {
     serverName: "BrayDashy (Live Demo)",
     serverIcon: "Rocket",
     headerLayout: "classic",
+    appCardStyle: "glass",
+    enableWeather: true,
+    weatherLocation: "London, UK",
+    weatherUnit: "C",
     categories: [
         { id: "media", name: "Media Delivery", order: 1 },
         { id: "manage", name: "Media Management", order: 2 },

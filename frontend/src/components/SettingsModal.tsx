@@ -78,7 +78,7 @@ export function SettingsModal({ config, onSave }: { config: any, onSave: (newCon
         });
     };
 
-    const handleGeneralChange = (field: string, value: string) => {
+    const handleGeneralChange = (field: string, value: string | boolean) => {
         setLocalConfig({
             ...localConfig,
             [field]: value
@@ -154,6 +154,62 @@ export function SettingsModal({ config, onSave }: { config: any, onSave: (newCon
                                             <option value="sidebar" className="bg-popover text-popover-foreground">Dynamic Sidebar</option>
                                         </select>
                                         <p className="text-xs text-muted-foreground">Choose the architectural structure of the top header area.</p>
+                                    </div>
+                                    <div className="space-y-2 pt-2">
+                                        <Label htmlFor="appCardStyle" className="font-semibold text-muted-foreground tracking-wider">App Card Style</Label>
+                                        <select
+                                            id="appCardStyle"
+                                            value={localConfig.appCardStyle || 'glass'}
+                                            onChange={(e) => handleGeneralChange('appCardStyle', e.target.value)}
+                                            className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background/50 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                        >
+                                            <option value="glass" className="bg-popover text-popover-foreground">Glassmorphism (Default)</option>
+                                            <option value="solid" className="bg-popover text-popover-foreground">Solid Minimalist</option>
+                                            <option value="outline" className="bg-popover text-popover-foreground">Clean Outline</option>
+                                        </select>
+                                        <p className="text-xs text-muted-foreground">Customize the visual style of the application buttons.</p>
+                                    </div>
+                                    <div className="space-y-2 pt-2 border-t border-border mt-4">
+                                        <h4 className="font-semibold text-muted-foreground tracking-wider mb-2">Weather Widget Integration</h4>
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <input
+                                                type="checkbox"
+                                                id="enableWeather"
+                                                checked={localConfig.enableWeather || false}
+                                                onChange={(e) => handleGeneralChange('enableWeather', e.target.checked)}
+                                                className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
+                                            />
+                                            <Label htmlFor="enableWeather" className="font-medium cursor-pointer">Enable Local Weather Panel</Label>
+                                        </div>
+                                        {localConfig.enableWeather && (
+                                            <div className="space-y-2">
+                                                <div className="flex gap-3">
+                                                    <div className="flex-1 space-y-2">
+                                                        <Label htmlFor="weatherLocation" className="text-xs text-muted-foreground">Location (City, Country)</Label>
+                                                        <Input
+                                                            id="weatherLocation"
+                                                            placeholder="e.g. New York, US or London, UK"
+                                                            value={localConfig.weatherLocation || ''}
+                                                            onChange={(e) => handleGeneralChange('weatherLocation', e.target.value)}
+                                                            className="bg-black/20"
+                                                        />
+                                                    </div>
+                                                    <div className="w-24 space-y-2">
+                                                        <Label htmlFor="weatherUnit" className="text-xs text-muted-foreground">Unit</Label>
+                                                        <select
+                                                            id="weatherUnit"
+                                                            value={localConfig.weatherUnit || 'F'}
+                                                            onChange={(e) => handleGeneralChange('weatherUnit', e.target.value)}
+                                                            className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background/50 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                                                        >
+                                                            <option value="F" className="bg-popover text-popover-foreground">°F</option>
+                                                            <option value="C" className="bg-popover text-popover-foreground">°C</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <p className="text-xs text-muted-foreground">Used to fetch real-time public weather data via Open-Meteo.</p>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </CardContent>
