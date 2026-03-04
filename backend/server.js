@@ -7,7 +7,7 @@ const si = require('systeminformation');
 const fs = require('fs');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3050; // Changed from 3000 to avoid conflicts
 
 app.use(cors());
 app.use(express.json());
@@ -15,7 +15,13 @@ app.use(express.json());
 // Serve static frontend files (Vite build output)
 app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
-const CONFIG_PATH = path.join(__dirname, '../config.json');
+const CONFIG_DIR = process.env.CONFIG_DIR || path.join(__dirname, '../data');
+const CONFIG_PATH = path.join(CONFIG_DIR, 'config.json');
+
+// Ensure data directory exists
+if (!fs.existsSync(CONFIG_DIR)) {
+    fs.mkdirSync(CONFIG_DIR, { recursive: true });
+}
 
 // Helper to read config
 function readConfig() {

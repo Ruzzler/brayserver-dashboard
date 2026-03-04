@@ -4,8 +4,8 @@ services:
     container_name: braydashy-dashboard
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "3050:3050"
     volumes:
-      - ./config.json:/app/config.json
+      - ./data:/app/data
     # The image is pulled from your private GitHub registry
     # Ensure you are logged into ghcr.io on Unraid before running `docker-compose up -d`

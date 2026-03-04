@@ -22,5 +22,5 @@ COPY backend/server.js ./backend/
 # Copy built frontend assets from Stage 1
 COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
 
-EXPOSE 3000
+EXPOSE 3050
 CMD ["node", "backend/server.js"]

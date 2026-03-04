@@ -13,7 +13,7 @@
     A custom, beautiful, and highly dynamic unraid landing page dashboard for your server apps. Features a real-time reactive UI, 4 interchangeable layout styles, and live infrastructure metrics.
   </Overview>
   <Category>Tools: Network:Web</Category>
-  <WebUI>http://[IP]:[PORT:3000]/</WebUI>
+  <WebUI>http://[IP]:[PORT:3050]/</WebUI>
   <TemplateURL/>
   <Icon>https://dashy.to/icons/monitor.png</Icon>
   <ExtraParams/>
@@ -23,6 +23,6 @@
   <DonateText/>
   <DonateLink/>
   <Requires/>
-  <Config Name="WebUI Port" Target="3000" Default="3000" Mode="tcp" Description="The port the dashboard is accessible on" Type="Port" Display="always" Required="true" Mask="false">3000</Config>
-  <Config Name="App Data Config" Target="/app/config.json" Default="/mnt/user/appdata/braydashy/config.json" Mode="rw" Description="Persistent storage location for your dashboard links, categories, and settings." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/braydashy/config.json</Config>
+  <Config Name="WebUI Port" Target="3050" Default="3050" Mode="tcp" Description="The port the dashboard is accessible on" Type="Port" Display="always" Required="true" Mask="false">3050</Config>
+  <Config Name="App Data Directory" Target="/app/data" Default="/mnt/user/appdata/braydashy/" Mode="rw" Description="Persistent storage folder for your dashboard configuration file." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/braydashy/</Config>
 </Container>

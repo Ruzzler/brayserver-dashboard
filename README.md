@@ -31,8 +31,8 @@ BrayDashy is optimized for containerized environments and includes native suppor
 ### Docker / Unraid
 
 1. Utilize the provided `braydashy-docker-template.xml` template.
-2. Ensure you map the `/app/config.json` path to a persistent volume (e.g., `/mnt/user/appdata/braydashy/config.json`). This protects your configuration from container rebuilds.
-3. Access the dashboard via port `3000` on the host machine.
+2. Ensure you map the `/app/data` path to a persistent volume (e.g., `/mnt/user/appdata/braydashy/`). This protects your configuration file from container rebuilds.
+3. Access the dashboard via port `3050` on the host machine.
 
 ### Local Development Environment
 
@@ -42,6 +42,6 @@ To compile and execute the interface locally:
 2. Install dependencies for the frontend application: `cd frontend && npm install`
 3. Install dependencies for the backend service: `npm install`
 4. Launch the frontend development server: `cd frontend && npm run dev`
-5. Launch the backend proxy service: `node server.js`
+5. Launch the backend proxy service: `node backend/server.js`
 
-*Note: The frontend development server utilizes port 5173 for Hot Module Replacement, but queries the Node.js API on port 3000 to fetch metrics and configuration data.*
+*Note: The frontend development server utilizes port 5173 for Hot Module Replacement, but queries the Node.js API on port 3050 to fetch metrics and configuration data.*
