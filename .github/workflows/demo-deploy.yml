@@ -38,7 +38,7 @@ jobs:
         run: npm run build
         env:
           VITE_DEMO_MODE: "true"
-          VITE_BASE_PATH: "/brayserver-dashboard/"
+          VITE_BASE_PATH: "/braydashy-dashboard/"
 
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v3
