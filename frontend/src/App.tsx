@@ -185,6 +185,18 @@ function App() {
               })}
             </div>
           </main>
+
+          <footer className="w-full mt-24 mb-8 text-center">
+            <a
+              href="https://github.com/Ruzzler/brayserver-dashboard"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 text-sm text-muted-foreground/60 hover:text-muted-foreground transition-colors"
+            >
+              <Icons.Github className="w-4 h-4" />
+              <span>BrayServer Dashboard on GitHub</span>
+            </a>
+          </footer>
         </div>
       </div>
     </>

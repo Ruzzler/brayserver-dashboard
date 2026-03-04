@@ -15,7 +15,30 @@ const SUBTITLES = [
     "Hold on, I'm fixing a bug",
     "Running on hopes and dreams",
     "Digital hoarding at its finest",
-    "Clicking buttons until it works"
+    "Clicking buttons until it works",
+    "A sysadmin's favorite dashboard",
+    "sudo make me a sandwich",
+    "I read your email, I just didn't reply",
+    "My code doesn't work, I have no idea why. My code works, I have no idea why.",
+    "Why do programmers prefer dark mode? Because light attracts bugs.",
+    "Hardware is the part of the computer you can kick",
+    "I'm not procrastinating, I'm compiling.",
+    "There are 10 types of people in the world: those who understand binary, and those who don't.",
+    "To understand recursion, you must first understand recursion.",
+    "I would love to change the world, but they won't give me the source code.",
+    "A bug is just an undocumented feature.",
+    "Warning: May contain nuts... and bolts.",
+    "The cloud is just someone else's computer.",
+    "Trust me, I'm an engineer.",
+    "It’s not a bug, it’s a feature. At least, that's what I told the client.",
+    "I put the 'pro' in procrastinate... and 'crastinate' in my code.",
+    "I solemnly swear that I am up to no good... coding.",
+    "My other computer is a data center.",
+    "I don't need anger management, I just need people to stop breaking my code.",
+    "Error 404: Motivation not found.",
+    "Just one more commit...",
+    "Why do Java programmers have to wear glasses? Because they don't C#.",
+    "I'm fluent in three languages: English, Sarcasm, and JavaScript."
 ];
 
 export function Header({ config, onSaveConfig = () => { } }: { config?: any, onSaveConfig?: (newConfig: any) => void }) {
