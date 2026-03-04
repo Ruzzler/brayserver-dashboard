@@ -124,11 +124,20 @@ app.get('/api/sonarr/status', async (req, res) => {
         let stats = [];
         if (apiKey && apiKey !== '') {
             try {
+                // Fetch Queue
                 const queueRes = await axios.get(`${url}/api/v3/queue`, {
                     headers: { 'X-Api-Key': apiKey },
                     timeout: 3000
                 });
-                stats.push({ label: 'Queue', value: queueRes.data.totalRecords || '0', color: 'var(--warning)' });
+                stats.push({ id: 'queue', label: 'Queue', value: queueRes.data.totalRecords || '0', color: 'var(--warning)' });
+
+                // Fetch Wanted (Missing)
+                const wantedRes = await axios.get(`${url}/api/v3/wanted/missing`, {
+                    headers: { 'X-Api-Key': apiKey },
+                    timeout: 3000
+                });
+                stats.push({ id: 'wanted', label: 'Wanted', value: wantedRes.data.totalRecords || '0', color: 'var(--destructive)' });
+
             } catch (e) { console.error('Sonarr API error:', e.message); }
         }
         res.json({ online: true, stats: stats.length > 0 ? stats : null });
@@ -153,11 +162,20 @@ app.get('/api/radarr/status', async (req, res) => {
         let stats = [];
         if (apiKey && apiKey !== '') {
             try {
+                // Fetch Queue
                 const queueRes = await axios.get(`${url}/api/v3/queue`, {
                     headers: { 'X-Api-Key': apiKey },
                     timeout: 3000
                 });
-                stats.push({ label: 'Queue', value: queueRes.data.totalRecords || '0', color: 'var(--warning)' });
+                stats.push({ id: 'queue', label: 'Queue', value: queueRes.data.totalRecords || '0', color: 'var(--warning)' });
+
+                // Fetch Wanted (Missing)
+                const wantedRes = await axios.get(`${url}/api/v3/wanted/missing`, {
+                    headers: { 'X-Api-Key': apiKey },
+                    timeout: 3000
+                });
+                stats.push({ id: 'wanted', label: 'Wanted', value: wantedRes.data.totalRecords || '0', color: 'var(--destructive)' });
+
             } catch (e) { console.error('Radarr API error:', e.message); }
         }
         res.json({ online: true, stats: stats.length > 0 ? stats : null });
@@ -192,7 +210,11 @@ app.get('/api/adguard/status', async (req, res) => {
                         ? ((statsRes.data.num_blocked_filtering / statsRes.data.num_dns_queries) * 100).toFixed(1) + '%'
                         : '0%';
 
-                    stats.push({ label: 'Blocked', value: blockRate, color: 'var(--success)' });
+                    stats.push({ id: 'blocked_ratio', label: 'Blocked', value: blockRate, color: 'var(--success)' });
+
+                    if (statsRes.data.num_dns_queries) {
+                        stats.push({ id: 'total_queries', label: 'Queries', value: (statsRes.data.num_dns_queries / 1000).toFixed(1) + 'k', color: 'var(--primary)' });
+                    }
                 }
             } catch (e) {
                 console.error('AdGuard API error:', e.message);
@@ -223,7 +245,8 @@ app.get('/api/tautulli/status', async (req, res) => {
                 const actRes = await axios.get(`${url}/api/v2?apikey=${apiKey}&cmd=get_activity`, { timeout: 3000 });
                 if (actRes.data && actRes.data.response && actRes.data.response.data) {
                     const data = actRes.data.response.data;
-                    stats.push({ label: 'Streams', value: data.stream_count || '0', color: 'var(--success)' });
+                    stats.push({ id: 'streams', label: 'Streams', value: data.stream_count || '0', color: 'var(--success)' });
+                    stats.push({ id: 'bandwidth', label: 'Bandwidth', value: data.total_bandwidth ? Math.round(data.total_bandwidth / 1000) + ' Mbps' : '0 Mbps', color: 'var(--primary)' });
                 }
             } catch (e) { console.error('Tautulli API error:', e.message); }
         }
@@ -254,8 +277,17 @@ app.get('/api/overseerr/status', async (req, res) => {
                     timeout: 3000
                 });
                 if (pendingRes.data && pendingRes.data.pageInfo) {
-                    stats.push({ label: 'Pending', value: pendingRes.data.pageInfo.results || '0', color: 'var(--warning)' });
+                    stats.push({ id: 'pending_requests', label: 'Pending', value: pendingRes.data.pageInfo.results || '0', color: 'var(--warning)' });
                 }
+
+                const approvedRes = await axios.get(`${url}/api/v1/request?filter=approved`, {
+                    headers: { 'X-Api-Key': apiKey },
+                    timeout: 3000
+                });
+                if (approvedRes.data && approvedRes.data.pageInfo) {
+                    stats.push({ id: 'approved_requests', label: 'Approved', value: approvedRes.data.pageInfo.results || '0', color: 'var(--success)' });
+                }
+
             } catch (e) {
                 console.error('Overseerr API error:', e.message);
             }
@@ -288,8 +320,13 @@ app.get('/api/speedtest/status', async (req, res) => {
                 });
 
                 if (speedRes.data && speedRes.data.data) {
-                    const dl = (speedRes.data.data.download / 125000).toFixed(1);
-                    stats.push({ label: 'DL', value: dl + ' Mbps', color: 'var(--success)' });
+                    const dl = (speedRes.data.data.download / 125000).toFixed(0);
+                    const ul = (speedRes.data.data.upload / 125000).toFixed(0);
+                    const ping = Math.round(speedRes.data.data.ping);
+
+                    stats.push({ id: 'download', label: 'DL', value: dl + ' Mbps', color: 'var(--success)' });
+                    stats.push({ id: 'upload', label: 'UL', value: ul + ' Mbps', color: 'var(--primary)' });
+                    stats.push({ id: 'ping', label: 'Ping', value: ping + ' ms', color: 'var(--warning)' });
                 }
             } catch (e) {
                 console.error('Speedtest API error:', e.message);

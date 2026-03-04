@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 
 export interface AppStat {
+    id: string;
     label: string;
     value: string;
     color: string;
@@ -21,6 +22,7 @@ export interface AppItem {
     url: string;
     iconUrl?: string;
     icon: LucideIcon;
+    widgetPreferences?: string[];
 }
 
 export interface AppCategory {

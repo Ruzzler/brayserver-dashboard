@@ -77,7 +77,12 @@ export function AppCard({ app }: AppCardProps) {
                             <p className="text-muted-foreground flex items-center gap-1.5 m-0">
                                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span> Online
                             </p>
-                            {status.stats && status.stats.map((stat, idx) => (
+                            {status.stats && status.stats.filter(stat => {
+                                // If widgetPreferences is undefined, user hasn't touched the settings yet, so default to true.
+                                // If it is defined, check if this stat's ID is in the array.
+                                if (app.widgetPreferences === undefined) return true;
+                                return app.widgetPreferences.includes(stat.id);
+                            }).map((stat, idx) => (
                                 <p key={idx} className="text-muted-foreground m-0 flex items-center gap-1 whitespace-nowrap">
                                     <span className="opacity-50 tracking-wider text-[10px] uppercase font-semibold">{stat.label}</span>
                                     <span style={{ color: stat.color }} className="font-medium">{stat.value}</span>

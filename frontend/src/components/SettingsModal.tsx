@@ -4,12 +4,28 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Settings, Save, Plus, Trash2 } from 'lucide-react';
+import { Settings, Save, Plus, Trash2, CheckCircle2, XCircle, Loader2 } from 'lucide-react';
 import { ImportWizardModal } from './ImportWizardModal';
 
 export function SettingsModal({ config, onSave }: { config: any, onSave: (newConfig: any) => void }) {
     const [open, setOpen] = useState(false);
     const [localConfig, setLocalConfig] = useState(JSON.parse(JSON.stringify(config)));
+    const [testStatuses, setTestStatuses] = useState<{ [key: string]: 'idle' | 'testing' | 'success' | 'failed' }>({});
+
+    // Map keywords to specific API keys and available widgets
+    const SUPPORTED_APIS = [
+        { id: 'sonarr', keyword: 'sonarr', apiKeyMap: 'SONARR_API_KEY', label: 'Sonarr API Key', widgets: [{ id: 'queue', label: 'Queue' }, { id: 'wanted', label: 'Wanted' }] },
+        { id: 'radarr', keyword: 'radarr', apiKeyMap: 'RADARR_API_KEY', label: 'Radarr API Key', widgets: [{ id: 'queue', label: 'Queue' }, { id: 'wanted', label: 'Wanted' }] },
+        { id: 'tautulli', keyword: 'tautulli', apiKeyMap: 'TAUTULLI_API_KEY', label: 'Tautulli API Key', widgets: [{ id: 'streams', label: 'Streams' }, { id: 'bandwidth', label: 'Bandwidth' }] },
+        { id: 'adguard', keyword: 'adguard', apiKeyMap: 'ADGUARD_AUTH', label: 'AdGuard Auth (user:pass in base64)', widgets: [{ id: 'blocked_ratio', label: 'Blocked %' }, { id: 'total_queries', label: 'Total Queries' }] },
+        { id: 'overseerr', keyword: 'overseerr', apiKeyMap: 'OVERSEERR_API_KEY', label: 'Overseerr API Key', widgets: [{ id: 'pending_requests', label: 'Pending' }, { id: 'approved_requests', label: 'Approved' }] },
+        { id: 'speedtest', keyword: 'speedtest', apiKeyMap: 'SPEEDTEST_API_KEY', label: 'Speedtest Tracker API Key', widgets: [{ id: 'download', label: 'Download' }, { id: 'upload', label: 'Upload' }, { id: 'ping', label: 'Ping' }] }
+    ];
+
+    // Helper to find all supported apps the user currently has added
+    const activeIntegrations = SUPPORTED_APIS.filter(api =>
+        localConfig.apps.some((a: any) => a.name.toLowerCase().includes(api.keyword) || a.id.includes(api.keyword))
+    );
 
     // Sync if config prop changes
     React.useEffect(() => {
@@ -29,6 +45,53 @@ export function SettingsModal({ config, onSave }: { config: any, onSave: (newCon
                 [key]: value
             }
         });
+        // Reset status if they change the key
+        setTestStatuses(prev => ({ ...prev, [key]: 'idle' }));
+    };
+
+    const handleWidgetToggle = (appId: string, widgetId: string, checked: boolean) => {
+        setLocalConfig({
+            ...localConfig,
+            apps: localConfig.apps.map((a: any) => {
+                if (a.name.toLowerCase().includes(appId) || a.id.includes(appId)) {
+                    const currentPrefs = a.widgetPreferences || [];
+                    let newPrefs;
+                    if (checked) {
+                        newPrefs = [...currentPrefs, widgetId];
+                    } else {
+                        newPrefs = currentPrefs.filter((w: string) => w !== widgetId);
+                    }
+                    return { ...a, widgetPreferences: newPrefs };
+                }
+                return a;
+            })
+        });
+    };
+
+    const testConnection = async (appName: string, integrationId: string) => {
+        setTestStatuses(prev => ({ ...prev, [integrationId]: 'testing' }));
+        try {
+            // First save config temporarily (or hit a dedicated test route). 
+            // For now, testing via the standard proxy if the backend allows on-the-fly or relies on saved.
+            // *Note: Because backend relies on saved config, we must save first.*
+            await fetch('/api/config', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(localConfig)
+            });
+
+            // Trigger the status ping
+            const response = await fetch(`/api/${appName}/status`);
+            const data = await response.json();
+
+            if (data.online && data.stats) {
+                setTestStatuses(prev => ({ ...prev, [integrationId]: 'success' }));
+            } else {
+                setTestStatuses(prev => ({ ...prev, [integrationId]: 'failed' }));
+            }
+        } catch (e) {
+            setTestStatuses(prev => ({ ...prev, [integrationId]: 'failed' }));
+        }
     };
 
     const handleCategoryChange = (id: string, field: string, value: any) => {
@@ -249,19 +312,68 @@ export function SettingsModal({ config, onSave }: { config: any, onSave: (newCon
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                {Object.keys(localConfig?.apiKeys || {}).map(key => (
-                                    <div key={key} className="flex flex-col space-y-1.5">
-                                        <Label htmlFor={key} className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{key.replace(/_/g, ' ')}</Label>
-                                        <Input
-                                            id={key}
-                                            type="password"
-                                            placeholder={`Enter ${key}`}
-                                            value={localConfig.apiKeys[key] || ''}
-                                            onChange={(e) => handleApiKeyChange(key, e.target.value)}
-                                            className="bg-black/20"
-                                        />
+                                {activeIntegrations.length === 0 ? (
+                                    <div className="text-center py-8 text-muted-foreground">
+                                        <p>No supported applications detected.</p>
+                                        <p className="text-xs mt-2">Add apps like Sonarr, Radarr, or Tautulli to your dashboard to configure their API keys here.</p>
                                     </div>
-                                ))}
+                                ) : (
+                                    activeIntegrations.map(integration => {
+                                        const status = testStatuses[integration.apiKeyMap] || 'idle';
+
+                                        // Find the corresponding app instance from localConfig to check widget pres
+                                        const appInstance = localConfig.apps.find((a: any) => a.name.toLowerCase().includes(integration.keyword) || a.id.includes(integration.keyword));
+                                        const activeWidgets = appInstance?.widgetPreferences || [];
+
+                                        return (
+                                            <div key={integration.id} className="flex flex-col gap-4 bg-black/20 p-4 rounded-lg border border-border">
+                                                <div className="flex items-end gap-3">
+                                                    <div className="flex-1 space-y-1.5">
+                                                        <Label htmlFor={integration.apiKeyMap} className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{integration.label}</Label>
+                                                        <Input
+                                                            id={integration.apiKeyMap}
+                                                            type="password"
+                                                            placeholder={`Enter ${integration.label}`}
+                                                            value={localConfig.apiKeys?.[integration.apiKeyMap] || ''}
+                                                            onChange={(e) => handleApiKeyChange(integration.apiKeyMap, e.target.value)}
+                                                            className="bg-background/50"
+                                                        />
+                                                    </div>
+                                                    <button
+                                                        onClick={() => testConnection(integration.keyword, integration.apiKeyMap)}
+                                                        disabled={status === 'testing' || !localConfig.apiKeys?.[integration.apiKeyMap]}
+                                                        className="h-10 px-4 rounded-md bg-secondary text-secondary-foreground text-sm font-medium hover:bg-secondary/80 flex items-center gap-2 transition-colors disabled:opacity-50"
+                                                    >
+                                                        {status === 'testing' && <Loader2 className="w-4 h-4 animate-spin" />}
+                                                        {status === 'success' && <CheckCircle2 className="w-4 h-4 text-emerald-500" />}
+                                                        {status === 'failed' && <XCircle className="w-4 h-4 text-rose-500" />}
+                                                        {status === 'idle' && 'Test Connection'}
+                                                        {status !== 'idle' && status !== 'testing' && 'Retest'}
+                                                    </button>
+                                                </div>
+
+                                                <div className="space-y-2 mt-2 pt-3 border-t border-border/50">
+                                                    <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Visible App Card Widgets</Label>
+                                                    <div className="flex flex-wrap gap-4">
+                                                        {integration.widgets.map(w => (
+                                                            <div key={w.id} className="flex items-center gap-2">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    id={`${integration.id}-${w.id}`}
+                                                                    // Default to checked if widgetPreferences is strictly undefined (meaning they haven't set it yet, so show all)
+                                                                    checked={appInstance?.widgetPreferences === undefined ? true : activeWidgets.includes(w.id)}
+                                                                    onChange={(e) => handleWidgetToggle(integration.keyword, w.id, e.target.checked)}
+                                                                    className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary accent-primary bg-background"
+                                                                />
+                                                                <Label htmlFor={`${integration.id}-${w.id}`} className="text-sm cursor-pointer">{w.label}</Label>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })
+                                )}
                             </CardContent>
                         </Card>
                     </TabsContent>
