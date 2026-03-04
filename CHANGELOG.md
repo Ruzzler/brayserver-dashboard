@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0-beta.1] - 2026-03-04
+
+### Added
+- **Global Theme Engine**: Introducing 7 distinct palette choices (Zinc, Slate, Emerald, Ocean Blue, Rose Pink, Deep Violet, Warm Amber) that dynamically recalculate and overwrite the entire application CSS layer without a reload.
+- **Granular App Card Control**: Decoupled the rendering of applications into variable structural components. You can now independently combine Layouts (Grid, List, Minimal) and Base Sizing variants (Small, Medium, Large) directly from Settings.
+- **New Appearance Settings Tab**: Migrated all style controls into a dedicated dashboard panel for managing layouts and themes in real-time.
+
+### Fixed
+- **Settings Modal Crash**: Patched a critical React Context strict-mode bug introduced in 0.5.0 where clicking the Settings gear caused the dashboard to render a black screen due to malformed Component trees.
+
 ## [0.5.0-beta.1] - 2026-03-04
 
 ### Added

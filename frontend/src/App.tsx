@@ -29,7 +29,10 @@ interface Config {
   serverName: string;
   serverIcon?: string;
   headerLayout?: "classic" | "minimalist" | "split" | "sidebar";
+  themeColor?: "zinc" | "slate" | "emerald" | "blue" | "rose" | "violet" | "amber";
   appCardStyle?: "glass" | "solid" | "outline";
+  appCardLayout?: "grid" | "list" | "minimal";
+  appCardSize?: "small" | "medium" | "large";
   enableWeather?: boolean;
   enableWorkspaceMode?: boolean;
   weatherLocation?: string;
@@ -39,7 +42,7 @@ interface Config {
   glanceWidgets?: GlanceWidget[];
 }
 
-function AppCard({ app, style = 'glass', onOpenWorkspace }: { app: AppItem, style?: string, onOpenWorkspace?: (app: AppItem) => void }) {
+function AppCard({ app, style = 'glass', layout = 'grid', size = 'medium', onOpenWorkspace }: { app: AppItem, style?: string, layout?: string, size?: string, onOpenWorkspace?: (app: AppItem) => void }) {
   const [isOnline, setIsOnline] = useState<boolean | null>(null);
   const [latency, setLatency] = useState<number | null>(null);
   const [stats, setStats] = useState<any[] | null>(null);
@@ -66,11 +69,40 @@ function AppCard({ app, style = 'glass', onOpenWorkspace }: { app: AppItem, styl
   }, [app.id]);
 
   let iconElement = null;
+  const isMinimal = layout === 'minimal';
+  const isList = layout === 'list';
+
+  // --- Dynamic Sizing ---
+  const sizeClasses = {
+    small: {
+      card: isMinimal ? "p-3" : isList ? "p-3 gap-3" : "p-4 gap-3",
+      iconBox: isMinimal ? "w-10 h-10" : "w-10 h-10",
+      iconAsset: "w-5 h-5",
+      title: "text-base",
+      stats: "text-[10px]"
+    },
+    medium: {
+      card: isMinimal ? "p-4" : isList ? "p-4 gap-4" : "p-6 gap-5",
+      iconBox: isMinimal ? "w-14 h-14" : "w-14 h-14",
+      iconAsset: "w-8 h-8",
+      title: "text-lg",
+      stats: "text-xs"
+    },
+    large: {
+      card: isMinimal ? "p-6" : isList ? "p-5 gap-6" : "p-8 gap-6",
+      iconBox: isMinimal ? "w-20 h-20" : "w-16 h-16",
+      iconAsset: "w-10 h-10",
+      title: "text-xl",
+      stats: "text-sm"
+    }
+  };
+  const activeSizes = sizeClasses[size as keyof typeof sizeClasses] || sizeClasses.medium;
+
   if (app.iconType === 'image') {
     iconElement = (
       <img
         src={app.icon}
-        className="w-8 h-8 object-contain drop-shadow-md transition-transform duration-300 group-hover:scale-110"
+        className={`${activeSizes.iconAsset} object-contain drop-shadow-md transition-transform duration-300 group-hover:scale-110`}
         alt={app.name}
         onError={(e) => {
           e.currentTarget.onerror = null;
@@ -81,20 +113,29 @@ function AppCard({ app, style = 'glass', onOpenWorkspace }: { app: AppItem, styl
   } else {
     // @ts-ignore dynamic icon fetch
     const IconComp = Icons[formatIconName(app.icon)] || Icons.Box;
-    iconElement = <IconComp className="w-8 h-8 text-muted-foreground transition-transform duration-300 group-hover:scale-110 group-hover:text-foreground" />;
+    iconElement = <IconComp className={`${activeSizes.iconAsset} text-muted-foreground transition-transform duration-300 group-hover:scale-110 group-hover:text-foreground`} />;
   }
 
-  const baseClasses = "group relative rounded-2xl p-6 flex items-center gap-5 transition-all duration-500 overflow-hidden cursor-pointer no-underline";
+  // --- Layout Architecture ---
+  // Base classes always apply
+  let baseClasses = `group relative rounded-2xl flex items-center transition-all duration-500 overflow-hidden cursor-pointer no-underline ${activeSizes.card}`;
 
-  const styleClasses = {
+  // If we are in 'minimal', we center everything and throw away the right-side text column unless hovered
+  if (isMinimal) {
+    baseClasses += " justify-center";
+  } else {
+    baseClasses += " justify-start";
+  }
+
+  // --- Fill Styles ---
+  const fillClasses = {
     glass: "bg-card/40 border border-border/50 backdrop-blur-xl hover:bg-card/80 hover:border-border hover:shadow-2xl hover:-translate-y-1",
     solid: "bg-card border border-border hover:bg-muted hover:border-foreground/20 shadow-sm hover:shadow-md hover:-translate-y-1",
     outline: "bg-transparent border-2 border-border/50 hover:border-primary hover:bg-primary/5 hover:-translate-y-1"
   };
+  const activeFill = fillClasses[style as keyof typeof fillClasses] || fillClasses.glass;
 
-  const currentStyleClass = styleClasses[style as keyof typeof styleClasses] || styleClasses.glass;
-
-  const iconBase = "w-14 h-14 flex items-center justify-center rounded-xl flex-shrink-0 relative z-10 transition-colors duration-300";
+  const iconBase = `${activeSizes.iconBox} flex items-center justify-center rounded-xl flex-shrink-0 relative z-10 transition-colors duration-300`;
   const iconStyle = {
     glass: "bg-background/50 border border-border/50 shadow-inner group-hover:bg-background/80",
     solid: "bg-muted border border-border shadow-sm group-hover:bg-card",
@@ -110,37 +151,40 @@ function AppCard({ app, style = 'glass', onOpenWorkspace }: { app: AppItem, styl
   };
 
   return (
-    <a href={app.url} target="_blank" rel="noreferrer" onClick={handleClick} className={`${baseClasses} ${currentStyleClass}`}>
+    <a href={app.url} target="_blank" rel="noreferrer" onClick={handleClick} className={`${baseClasses} ${activeFill}`} title={isMinimal ? app.name : ''}>
       {/* Light sweep effect */}
       {style === 'glass' && <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] pointer-events-none"></div>}
 
       <div className={`${iconBase} ${currentIconStyle}`}>
         {iconElement}
       </div>
-      <div className="flex flex-col gap-1 relative z-10 w-full">
-        <h3 className="text-lg font-semibold leading-tight m-0 tracking-tight text-foreground transition-colors group-hover:text-primary">{app.name}</h3>
-        <p className="text-sm text-muted-foreground flex items-center justify-between gap-1.5 w-full">
-          <span className="flex items-center gap-1.5">
-            {isOnline === null ? (
-              <><span className="w-1.5 h-1.5 rounded-full bg-slate-500"></span> Checking...</>
-            ) : isOnline ? (
-              <><span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Online {latency !== null && <span className="opacity-60 text-[10px] ml-0.5 font-mono tracking-wider">({latency}ms)</span>}</>
-            ) : (
-              <><span className="w-1.5 h-1.5 rounded-full bg-red-500"></span> Offline</>
-            )}
-          </span>
-          {stats && stats.length > 0 && (
-            <span className="flex gap-2 text-xs font-mono opacity-80 mt-1 sm:mt-0 flex-wrap">
-              {stats.filter(s => {
-                if ((app as any).widgetPreferences === undefined) return true;
-                return (app as any).widgetPreferences.includes(s.id);
-              }).map((s, i) => (
-                <span key={i} className="flex gap-1"><span style={{ color: s.color }}>{s.label}:</span>{s.value}</span>
-              ))}
+
+      {!isMinimal && (
+        <div className={`flex flex-col gap-1 relative z-10 w-full ${isList ? 'flex-row items-center justify-between gap-4' : ''}`}>
+          <h3 className={`${activeSizes.title} font-semibold leading-tight m-0 tracking-tight text-foreground transition-colors group-hover:text-primary whitespace-nowrap overflow-hidden text-ellipsis ${isList ? 'flex-shrink-0 w-1/4' : ''}`}>{app.name}</h3>
+          <p className={`${activeSizes.stats} text-muted-foreground flex items-center justify-between gap-1.5 w-full ${isList ? 'flex-1' : ''}`}>
+            <span className="flex items-center gap-1.5 whitespace-nowrap">
+              {isOnline === null ? (
+                <><span className="w-1.5 h-1.5 rounded-full bg-slate-500"></span> Checking...</>
+              ) : isOnline ? (
+                <><span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Online {latency !== null && !isList && <span className="opacity-60 text-[10px] ml-0.5 font-mono tracking-wider">({latency}ms)</span>}</>
+              ) : (
+                <><span className="w-1.5 h-1.5 rounded-full bg-red-500"></span> Offline</>
+              )}
             </span>
-          )}
-        </p>
-      </div>
+            {stats && stats.length > 0 && (
+              <span className={`flex gap-2 font-mono opacity-80 flex-wrap justify-end ${isList ? 'flex-1' : 'mt-1 sm:mt-0'}`}>
+                {stats.filter(s => {
+                  if ((app as any).widgetPreferences === undefined) return true;
+                  return (app as any).widgetPreferences.includes(s.id);
+                }).map((s, i) => (
+                  <span key={i} className="flex gap-1"><span style={{ color: s.color }}>{s.label}:</span>{s.value}</span>
+                ))}
+              </span>
+            )}
+          </p>
+        </div>
+      )}
     </a>
   );
 }
@@ -182,6 +226,46 @@ function App() {
       }
     }
   }, [config]);
+
+  // Dynamic Theme Color Injection
+  useEffect(() => {
+    if (!config || !config.themeColor) return;
+    const root = document.documentElement;
+
+    const themes: Record<string, { primary: string, ring: string, background?: string }> = {
+      zinc: { primary: "240 5.9% 10%", ring: "240 10% 3.9%" }, // default
+      slate: { primary: "215.4 16.3% 46.9%", ring: "215.4 16.3% 46.9%" },
+      emerald: { primary: "142.1 76.2% 36.3%", ring: "142.1 76.2% 36.3%" },
+      blue: { primary: "221.2 83.2% 53.3%", ring: "221.2 83.2% 53.3%" },
+      rose: { primary: "346.8 77.2% 49.8%", ring: "346.8 77.2% 49.8%" },
+      violet: { primary: "262.1 83.3% 57.8%", ring: "262.1 83.3% 57.8%" },
+      amber: { primary: "37.7 92.1% 50.2%", ring: "37.7 92.1% 50.2%" }
+    };
+
+    const darkThemes: Record<string, { primary: string, ring: string }> = {
+      zinc: { primary: "0 0% 98%", ring: "240 4.9% 83.9%" }, // default dark
+      slate: { primary: "210 40% 98%", ring: "212.7 26.8% 83.9%" },
+      emerald: { primary: "149.3 80.4% 90.2%", ring: "142.4 71.8% 29.2%" },
+      blue: { primary: "210 40% 98%", ring: "217.2 32.6% 17.5%" },
+      rose: { primary: "355.7 100% 97.3%", ring: "346.8 77.2% 49.8%" },
+      violet: { primary: "255 92% 95%", ring: "262.1 83.3% 57.8%" },
+      amber: { primary: "48 96% 89%", ring: "38 92% 50%" }
+    };
+
+    const isDarkMode = root.classList.contains('dark');
+    const selectedTheme = isDarkMode ? darkThemes[config.themeColor] : themes[config.themeColor];
+
+    if (selectedTheme) {
+      if (config.themeColor === 'zinc') {
+        // Reset to exact Shadcn defaults
+        root.style.setProperty('--primary', isDarkMode ? "0 0% 98%" : "240 5.9% 10%");
+        root.style.setProperty('--ring', isDarkMode ? "240 4.9% 83.9%" : "240 10% 3.9%");
+      } else {
+        root.style.setProperty('--primary', selectedTheme.primary);
+        root.style.setProperty('--ring', selectedTheme.ring);
+      }
+    }
+  }, [config?.themeColor]);
 
   if (!config) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading Dashboard Data...</div>;
 
@@ -229,12 +313,14 @@ function App() {
                 return (
                   <section key={cat.id} className="flex flex-col gap-5">
                     <h2 className="text-xl font-semibold text-muted-foreground border-b border-border pb-2">{cat.name}</h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <div className={`grid gap-6 ${config.appCardLayout === 'list' ? 'grid-cols-1' : config.appCardLayout === 'minimal' ? 'grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12' : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'}`}>
                       {categoryApps.map(app => (
                         <AppCard
                           key={app.id}
                           app={app}
                           style={config.appCardStyle}
+                          layout={config.appCardLayout}
+                          size={config.appCardSize}
                           onOpenWorkspace={
                             config.enableWorkspaceMode && !app.ignoreWorkspace
                               ? (appItem) => setActiveWorkspace(appItem)

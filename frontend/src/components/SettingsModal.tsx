@@ -195,8 +195,9 @@ export function SettingsModal({ config, onSave }: { config: any, onSave: (newCon
                 </DialogHeader>
 
                 <Tabs defaultValue="general" className="w-full mt-4">
-                    <TabsList className="grid w-full grid-cols-5 mb-8">
+                    <TabsList className="grid w-full grid-cols-6 mb-8">
                         <TabsTrigger value="general">General</TabsTrigger>
+                        <TabsTrigger value="appearance">Appearance</TabsTrigger>
                         <TabsTrigger value="categories">Categories</TabsTrigger>
                         <TabsTrigger value="apps">Apps</TabsTrigger>
                         <TabsTrigger value="integrations">API Keys</TabsTrigger>
@@ -248,35 +249,6 @@ export function SettingsModal({ config, onSave }: { config: any, onSave: (newCon
                                             <option value="youtube" className="bg-popover text-popover-foreground">YouTube</option>
                                         </select>
                                         <p className="text-xs text-muted-foreground">Hitting Enter in the search bar routes queries here (Supports <code className="bg-muted px-1 rounded">!g</code>, <code className="bg-muted px-1 rounded">!yt</code>, <code className="bg-muted px-1 rounded">!ddg</code>, <code className="bg-muted px-1 rounded">!bing</code> shortcuts).</p>
-                                    </div>
-                                    <div className="space-y-2 pt-2 border-t border-border mt-4">
-                                        <Label htmlFor="headerLayout" className="font-semibold text-muted-foreground tracking-wider">Header Layout Style</Label>
-                                        <select
-                                            id="headerLayout"
-                                            value={localConfig.headerLayout || 'classic'}
-                                            onChange={(e) => handleGeneralChange('headerLayout', e.target.value)}
-                                            className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background/50 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                        >
-                                            <option value="classic" className="bg-popover text-popover-foreground">Classic (Default)</option>
-                                            <option value="minimalist" className="bg-popover text-popover-foreground">Minimalist (Centered Hero)</option>
-                                            <option value="split" className="bg-popover text-popover-foreground">Split View (Left/Right Grid)</option>
-                                            <option value="sidebar" className="bg-popover text-popover-foreground">Dynamic Sidebar</option>
-                                        </select>
-                                        <p className="text-xs text-muted-foreground">Choose the architectural structure of the top header area.</p>
-                                    </div>
-                                    <div className="space-y-2 pt-2">
-                                        <Label htmlFor="appCardStyle" className="font-semibold text-muted-foreground tracking-wider">App Card Style</Label>
-                                        <select
-                                            id="appCardStyle"
-                                            value={localConfig.appCardStyle || 'glass'}
-                                            onChange={(e) => handleGeneralChange('appCardStyle', e.target.value)}
-                                            className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background/50 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                        >
-                                            <option value="glass" className="bg-popover text-popover-foreground">Glassmorphism (Default)</option>
-                                            <option value="solid" className="bg-popover text-popover-foreground">Solid Minimalist</option>
-                                            <option value="outline" className="bg-popover text-popover-foreground">Clean Outline</option>
-                                        </select>
-                                        <p className="text-xs text-muted-foreground">Customize the visual style of the application buttons.</p>
                                     </div>
                                     <div className="space-y-2 pt-2 border-t border-border mt-4">
                                         <h4 className="font-semibold text-muted-foreground tracking-wider mb-2">Workspace Integration</h4>
@@ -525,64 +497,159 @@ export function SettingsModal({ config, onSave }: { config: any, onSave: (newCon
                         </Card>
                     </TabsContent>
 
-                </Tabs>
-
-                {/* Widgets Tab */}
-                <TabsContent value="widgets">
-                    <Card className="bg-transparent border-border">
-                        <CardHeader className="flex flex-row items-center justify-between">
-                            <div>
-                                <CardTitle>Glance Widgets</CardTitle>
-                                <CardDescription>Add quick info cards to the top of your dashboard.</CardDescription>
-                            </div>
-                            <button onClick={addWidget} className="bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors">
-                                <Plus className="w-4 h-4 mr-2" /> Add Widget
-                            </button>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            {(localConfig.glanceWidgets || []).map((widget: any) => (
-                                <div key={widget.id} className="flex flex-col gap-4 bg-black/20 p-4 rounded-lg border border-border">
-                                    <div className="flex items-start gap-4">
-                                        <div className="flex-[1] space-y-1">
-                                            <Label className="text-xs text-muted-foreground">Widget Type</Label>
-                                            <select
-                                                value={widget.type}
-                                                onChange={e => handleWidgetChange(widget.id, 'type', e.target.value)}
-                                                className="flex h-8 w-full items-center justify-between rounded-md border border-input bg-background/50 px-3 py-1 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                                            >
-                                                <option value="clock" className="bg-popover text-popover-foreground">Digital Clock</option>
-                                                <option value="system_stats" className="bg-popover text-popover-foreground">Local System Stats</option>
-                                                <option value="rss" className="bg-popover text-popover-foreground">RSS Feed</option>
-                                            </select>
-                                        </div>
-                                        <div className="pt-5">
-                                            <button onClick={() => removeWidget(widget.id)} className="text-destructive hover:text-destructive/80 p-1">
-                                                <Trash2 className="w-4 h-4" />
-                                            </button>
-                                        </div>
-                                    </div>
-                                    {widget.type === 'rss' && (
+                    {/* Widgets Tab */}
+                    <TabsContent value="widgets">
+                        <Card className="bg-transparent border-border">
+                            <CardHeader className="flex flex-row items-center justify-between">
+                                <div>
+                                    <CardTitle>Glance Widgets</CardTitle>
+                                    <CardDescription>Add quick info cards to the top of your dashboard.</CardDescription>
+                                </div>
+                                <button onClick={addWidget} className="bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors">
+                                    <Plus className="w-4 h-4 mr-2" /> Add Widget
+                                </button>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                {(localConfig.glanceWidgets || []).map((widget: any) => (
+                                    <div key={widget.id} className="flex flex-col gap-4 bg-black/20 p-4 rounded-lg border border-border">
                                         <div className="flex items-start gap-4">
                                             <div className="flex-[1] space-y-1">
-                                                <Label className="text-xs text-muted-foreground">Feed Label</Label>
-                                                <Input placeholder="e.g. HackerNews" value={widget.label || ''} onChange={e => handleWidgetChange(widget.id, 'label', e.target.value)} className="bg-background/50 h-8 text-xs" />
+                                                <Label className="text-xs text-muted-foreground">Widget Type</Label>
+                                                <select
+                                                    value={widget.type}
+                                                    onChange={e => handleWidgetChange(widget.id, 'type', e.target.value)}
+                                                    className="flex h-8 w-full items-center justify-between rounded-md border border-input bg-background/50 px-3 py-1 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                                                >
+                                                    <option value="clock" className="bg-popover text-popover-foreground">Digital Clock</option>
+                                                    <option value="system_stats" className="bg-popover text-popover-foreground">Local System Stats</option>
+                                                    <option value="rss" className="bg-popover text-popover-foreground">RSS Feed</option>
+                                                </select>
                                             </div>
-                                            <div className="flex-[2] space-y-1">
-                                                <Label className="text-xs text-muted-foreground">RSS XML URL</Label>
-                                                <Input placeholder="https://..." value={widget.url || ''} onChange={e => handleWidgetChange(widget.id, 'url', e.target.value)} className="bg-background/50 h-8 font-mono text-xs" />
+                                            <div className="pt-5">
+                                                <button onClick={() => removeWidget(widget.id)} className="text-destructive hover:text-destructive/80 p-1">
+                                                    <Trash2 className="w-4 h-4" />
+                                                </button>
                                             </div>
                                         </div>
-                                    )}
+                                        {widget.type === 'rss' && (
+                                            <div className="flex items-start gap-4">
+                                                <div className="flex-[1] space-y-1">
+                                                    <Label className="text-xs text-muted-foreground">Feed Label</Label>
+                                                    <Input placeholder="e.g. HackerNews" value={widget.label || ''} onChange={e => handleWidgetChange(widget.id, 'label', e.target.value)} className="bg-background/50 h-8 text-xs" />
+                                                </div>
+                                                <div className="flex-[2] space-y-1">
+                                                    <Label className="text-xs text-muted-foreground">RSS XML URL</Label>
+                                                    <Input placeholder="https://..." value={widget.url || ''} onChange={e => handleWidgetChange(widget.id, 'url', e.target.value)} className="bg-background/50 h-8 font-mono text-xs" />
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                                {(!localConfig.glanceWidgets || localConfig.glanceWidgets.length === 0) && (
+                                    <div className="text-center py-8 text-muted-foreground">
+                                        <p>No widgets configured.</p>
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+
+                    {/* Appearance Tab */}
+                    <TabsContent value="appearance">
+                        <Card className="bg-transparent border-border">
+                            <CardHeader>
+                                <CardTitle>Appearance & Theming</CardTitle>
+                                <CardDescription>Customize the visual layout, sizing, and color palette of your dashboard.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-6">
+                                <div className="space-y-4">
+                                    <h4 className="font-semibold text-muted-foreground tracking-wider border-b border-border/50 pb-2">Global Theming</h4>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="themeColor" className="font-semibold text-muted-foreground tracking-wider">Primary Theme Color</Label>
+                                        <select
+                                            id="themeColor"
+                                            value={localConfig.themeColor || 'zinc'}
+                                            onChange={(e) => handleGeneralChange('themeColor', e.target.value)}
+                                            className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background/50 px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+                                        >
+                                            <option value="zinc" className="bg-popover text-popover-foreground">Zinc (Default Dark Grey)</option>
+                                            <option value="slate" className="bg-popover text-popover-foreground">Slate (Cool Blue/Grey)</option>
+                                            <option value="emerald" className="bg-popover text-popover-foreground">Emerald Green</option>
+                                            <option value="blue" className="bg-popover text-popover-foreground">Ocean Blue</option>
+                                            <option value="rose" className="bg-popover text-popover-foreground">Rose Pink</option>
+                                            <option value="violet" className="bg-popover text-popover-foreground">Deep Violet</option>
+                                            <option value="amber" className="bg-popover text-popover-foreground">Warm Amber</option>
+                                        </select>
+                                        <p className="text-xs text-muted-foreground">Changes the default active states and CSS variables across all components.</p>
+                                    </div>
                                 </div>
-                            ))}
-                            {(!localConfig.glanceWidgets || localConfig.glanceWidgets.length === 0) && (
-                                <div className="text-center py-8 text-muted-foreground">
-                                    <p>No widgets configured.</p>
+
+                                <div className="space-y-4 pt-4">
+                                    <h4 className="font-semibold text-muted-foreground tracking-wider border-b border-border/50 pb-2">Header Structure</h4>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="appearanceHeaderLayout" className="font-semibold text-muted-foreground tracking-wider">Header Layout Profile</Label>
+                                        <select
+                                            id="appearanceHeaderLayout"
+                                            value={localConfig.headerLayout || 'classic'}
+                                            onChange={(e) => handleGeneralChange('headerLayout', e.target.value)}
+                                            className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background/50 px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+                                        >
+                                            <option value="classic" className="bg-popover text-popover-foreground">Classic (Default)</option>
+                                            <option value="minimalist" className="bg-popover text-popover-foreground">Minimalist (Centered Hero)</option>
+                                            <option value="split" className="bg-popover text-popover-foreground">Split View (Left/Right Grid)</option>
+                                            <option value="sidebar" className="bg-popover text-popover-foreground">Dynamic Sidebar</option>
+                                        </select>
+                                    </div>
                                 </div>
-                            )}
-                        </CardContent>
-                    </Card>
-                </TabsContent>
+
+                                <div className="space-y-4 pt-4">
+                                    <h4 className="font-semibold text-muted-foreground tracking-wider border-b border-border/50 pb-2">App Card Styling</h4>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="appCardLayout" className="font-semibold text-muted-foreground tracking-wider">Card Layout Structure</Label>
+                                            <select
+                                                id="appCardLayout"
+                                                value={localConfig.appCardLayout || 'grid'}
+                                                onChange={(e) => handleGeneralChange('appCardLayout', e.target.value)}
+                                                className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background/50 px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+                                            >
+                                                <option value="grid" className="bg-popover text-popover-foreground">Grid (Standard Cards)</option>
+                                                <option value="list" className="bg-popover text-popover-foreground">List (Compact Horizontal Rows)</option>
+                                                <option value="minimal" className="bg-popover text-popover-foreground">Minimal (Icon Only Hover Cards)</option>
+                                            </select>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="appCardSize" className="font-semibold text-muted-foreground tracking-wider">Base Size Variant</Label>
+                                            <select
+                                                id="appCardSize"
+                                                value={localConfig.appCardSize || 'medium'}
+                                                onChange={(e) => handleGeneralChange('appCardSize', e.target.value)}
+                                                className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background/50 px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+                                            >
+                                                <option value="small" className="bg-popover text-popover-foreground">Small</option>
+                                                <option value="medium" className="bg-popover text-popover-foreground">Medium (Default)</option>
+                                                <option value="large" className="bg-popover text-popover-foreground">Large (Chunky)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2 pt-2">
+                                        <Label htmlFor="appearanceAppCardStyle" className="font-semibold text-muted-foreground tracking-wider">Card Fill Aesthetic</Label>
+                                        <select
+                                            id="appearanceAppCardStyle"
+                                            value={localConfig.appCardStyle || 'glass'}
+                                            onChange={(e) => handleGeneralChange('appCardStyle', e.target.value)}
+                                            className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background/50 px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+                                        >
+                                            <option value="glass" className="bg-popover text-popover-foreground">Glassmorphism (Default)</option>
+                                            <option value="solid" className="bg-popover text-popover-foreground">Solid Minimalist</option>
+                                            <option value="outline" className="bg-popover text-popover-foreground">Clean Outline</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+                </Tabs>
 
                 <div className="flex justify-end gap-3 mt-6 pt-6 border-t border-border">
                     <button onClick={() => setOpen(false)} className="px-4 py-2 rounded-md text-sm font-medium hover:bg-secondary text-muted-foreground">Cancel</button>

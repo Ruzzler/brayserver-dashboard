@@ -19,7 +19,8 @@ BrayDashy is a modern dashboard engineered specifically for home servers and sel
 
 ## Core Capabilities
 
-*   **Dynamic Layout Engine:** Supports four distinct, hot-swappable structural designs (Classic, Minimalist, Split View, Dynamic Sidebar).
+*   **Global Layout & Theming Engine:** Supports four distinct header UI structures and seven vivid application-wide color palettes that dynamically inject into the active CSS HSL tokens in real-time.
+*   **Granular App Cards:** Fully customizable application cards. Choose between Grid, List, or Minimal layouts, and scale them between Small, Medium, or Large breakpoints to compress or expand your visual density.
 *   **In-Browser Configuration:** A comprehensive settings modal allows operators to add services, categorize links, and inject API keys without utilizing the terminal.
 *   **Workspace Overlay Mode:** Confine application web interfaces directly inside the dashboard using an interactive IFrame viewer instead of opening endless new tabs.
 *   **Glance Widgets**: Build a custom scrolling row of system status rings, beautiful digital clocks, and proxy-routed RSS feeds fetched on the fly.

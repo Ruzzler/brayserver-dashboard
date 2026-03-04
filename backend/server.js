@@ -34,6 +34,9 @@ function readConfig() {
         headerLayout: "classic",
         defaultSearchProvider: "google",
         enableWorkspaceMode: false,
+        themeColor: "zinc",
+        appCardLayout: "grid",
+        appCardSize: "medium",
         categories: [], apps: [], apiKeys: {},
         glanceWidgets: []
     };
@@ -48,6 +51,9 @@ function readConfig() {
         if (!parsed.headerLayout) parsed.headerLayout = "classic";
         if (!parsed.defaultSearchProvider) parsed.defaultSearchProvider = "google";
         if (parsed.enableWorkspaceMode === undefined) parsed.enableWorkspaceMode = false;
+        if (!parsed.themeColor) parsed.themeColor = "zinc";
+        if (!parsed.appCardLayout) parsed.appCardLayout = "grid";
+        if (!parsed.appCardSize) parsed.appCardSize = "medium";
         if (!parsed.glanceWidgets) parsed.glanceWidgets = [];
         return parsed;
     } catch (e) {
