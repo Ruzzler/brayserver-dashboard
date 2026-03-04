@@ -38,6 +38,7 @@ interface Config {
 
 function AppCard({ app, style = 'glass', onOpenWorkspace }: { app: AppItem, style?: string, onOpenWorkspace?: (app: AppItem) => void }) {
   const [isOnline, setIsOnline] = useState<boolean | null>(null);
+  const [latency, setLatency] = useState<number | null>(null);
   const [stats, setStats] = useState<any[] | null>(null);
 
   useEffect(() => {
@@ -47,6 +48,7 @@ function AppCard({ app, style = 'glass', onOpenWorkspace }: { app: AppItem, styl
         if (res.ok) {
           const data = await res.json();
           setIsOnline(data.online);
+          setLatency(data.latency ?? null);
           if (data.stats) setStats(data.stats);
         } else {
           setIsOnline(false);
@@ -119,14 +121,17 @@ function AppCard({ app, style = 'glass', onOpenWorkspace }: { app: AppItem, styl
             {isOnline === null ? (
               <><span className="w-1.5 h-1.5 rounded-full bg-slate-500"></span> Checking...</>
             ) : isOnline ? (
-              <><span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Online</>
+              <><span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Online {latency !== null && <span className="opacity-60 text-[10px] ml-0.5 font-mono tracking-wider">({latency}ms)</span>}</>
             ) : (
               <><span className="w-1.5 h-1.5 rounded-full bg-red-500"></span> Offline</>
             )}
           </span>
           {stats && stats.length > 0 && (
-            <span className="flex gap-2 text-xs font-mono opacity-80">
-              {stats.map((s, i) => (
+            <span className="flex gap-2 text-xs font-mono opacity-80 mt-1 sm:mt-0 flex-wrap">
+              {stats.filter(s => {
+                if ((app as any).widgetPreferences === undefined) return true;
+                return (app as any).widgetPreferences.includes(s.id);
+              }).map((s, i) => (
                 <span key={i} className="flex gap-1"><span style={{ color: s.color }}>{s.label}:</span>{s.value}</span>
               ))}
             </span>

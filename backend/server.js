@@ -93,19 +93,22 @@ async function checkServiceReachable(urlStr) {
             const socket = new net.Socket();
             const onError = () => {
                 socket.destroy();
-                resolve(false);
+                resolve({ online: false });
             };
+
+            const startTime = Date.now();
 
             socket.setTimeout(2000);
             socket.on('error', onError);
             socket.on('timeout', onError);
 
             socket.connect(port, host, () => {
+                const latency = Date.now() - startTime;
                 socket.end();
-                resolve(true); // TCP connection was successful!
+                resolve({ online: true, latency }); // TCP connection was successful!
             });
         } catch (error) {
-            resolve(false);
+            resolve({ online: false });
         }
     });
 }
@@ -120,8 +123,8 @@ app.get('/api/sonarr/status', async (req, res) => {
     const apiKey = config.apiKeys.SONARR_API_KEY;
 
     try {
-        const isOnline = await checkServiceReachable(url);
-        if (!isOnline) return res.json({ online: false });
+        const pingResult = await checkServiceReachable(url);
+        if (!pingResult.online) return res.json({ online: false });
 
         let stats = [];
         if (apiKey && apiKey !== '') {
@@ -142,9 +145,10 @@ app.get('/api/sonarr/status', async (req, res) => {
 
             } catch (e) { console.error('Sonarr API error:', e.message); }
         }
-        res.json({ online: true, stats: stats.length > 0 ? stats : null });
+        res.json({ online: true, latency: pingResult.latency, stats: stats.length > 0 ? stats : null });
     } catch (error) {
-        res.json({ online: await checkServiceReachable(url) });
+        const fb = await checkServiceReachable(url);
+        res.json({ online: fb.online, latency: fb.latency });
     }
 });
 
@@ -158,8 +162,8 @@ app.get('/api/radarr/status', async (req, res) => {
     const apiKey = config.apiKeys.RADARR_API_KEY;
 
     try {
-        const isOnline = await checkServiceReachable(url);
-        if (!isOnline) return res.json({ online: false });
+        const pingResult = await checkServiceReachable(url);
+        if (!pingResult.online) return res.json({ online: false });
 
         let stats = [];
         if (apiKey && apiKey !== '') {
@@ -180,9 +184,10 @@ app.get('/api/radarr/status', async (req, res) => {
 
             } catch (e) { console.error('Radarr API error:', e.message); }
         }
-        res.json({ online: true, stats: stats.length > 0 ? stats : null });
+        res.json({ online: true, latency: pingResult.latency, stats: stats.length > 0 ? stats : null });
     } catch (error) {
-        res.json({ online: await checkServiceReachable(url) });
+        const fb = await checkServiceReachable(url);
+        res.json({ online: fb.online, latency: fb.latency });
     }
 });
 
@@ -196,8 +201,8 @@ app.get('/api/adguard/status', async (req, res) => {
     const authString = config.apiKeys.ADGUARD_AUTH;
 
     try {
-        const isOnline = await checkServiceReachable(url);
-        if (!isOnline) return res.json({ online: false });
+        const pingResult = await checkServiceReachable(url);
+        if (!pingResult.online) return res.json({ online: false });
 
         let stats = [];
         if (authString && authString !== '') {
@@ -222,9 +227,10 @@ app.get('/api/adguard/status', async (req, res) => {
                 console.error('AdGuard API error:', e.message);
             }
         }
-        res.json({ online: true, stats: stats.length > 0 ? stats : null });
+        res.json({ online: true, latency: pingResult.latency, stats: stats.length > 0 ? stats : null });
     } catch (error) {
-        res.json({ online: await checkServiceReachable(url) });
+        const fb = await checkServiceReachable(url);
+        res.json({ online: fb.online, latency: fb.latency });
     }
 });
 
@@ -238,8 +244,8 @@ app.get('/api/tautulli/status', async (req, res) => {
     const apiKey = config.apiKeys.TAUTULLI_API_KEY;
 
     try {
-        const isOnline = await checkServiceReachable(url);
-        if (!isOnline) return res.json({ online: false });
+        const pingResult = await checkServiceReachable(url);
+        if (!pingResult.online) return res.json({ online: false });
 
         let stats = [];
         if (apiKey) {
@@ -252,9 +258,10 @@ app.get('/api/tautulli/status', async (req, res) => {
                 }
             } catch (e) { console.error('Tautulli API error:', e.message); }
         }
-        res.json({ online: true, stats: stats.length > 0 ? stats : null });
+        res.json({ online: true, latency: pingResult.latency, stats: stats.length > 0 ? stats : null });
     } catch (error) {
-        res.json({ online: await checkServiceReachable(url) });
+        const fb = await checkServiceReachable(url);
+        res.json({ online: fb.online, latency: fb.latency });
     }
 });
 
@@ -268,8 +275,8 @@ app.get('/api/overseerr/status', async (req, res) => {
     const apiKey = config.apiKeys.OVERSEERR_API_KEY;
 
     try {
-        const isOnline = await checkServiceReachable(url);
-        if (!isOnline) return res.json({ online: false });
+        const pingResult = await checkServiceReachable(url);
+        if (!pingResult.online) return res.json({ online: false });
 
         let stats = [];
         if (apiKey) {
@@ -294,9 +301,10 @@ app.get('/api/overseerr/status', async (req, res) => {
                 console.error('Overseerr API error:', e.message);
             }
         }
-        res.json({ online: true, stats: stats.length > 0 ? stats : null });
+        res.json({ online: true, latency: pingResult.latency, stats: stats.length > 0 ? stats : null });
     } catch (error) {
-        res.json({ online: await checkServiceReachable(url) });
+        const fb = await checkServiceReachable(url);
+        res.json({ online: fb.online, latency: fb.latency });
     }
 });
 
@@ -310,8 +318,8 @@ app.get('/api/speedtest/status', async (req, res) => {
     const apiKey = config.apiKeys.SPEEDTEST_API_KEY;
 
     try {
-        const isOnline = await checkServiceReachable(url);
-        if (!isOnline) return res.json({ online: false });
+        const pingResult = await checkServiceReachable(url);
+        if (!pingResult.online) return res.json({ online: false });
 
         let stats = [];
         if (apiKey) {
@@ -334,9 +342,10 @@ app.get('/api/speedtest/status', async (req, res) => {
                 console.error('Speedtest API error:', e.message);
             }
         }
-        res.json({ online: true, stats: stats.length > 0 ? stats : null });
+        res.json({ online: true, latency: pingResult.latency, stats: stats.length > 0 ? stats : null });
     } catch (error) {
-        res.json({ online: await checkServiceReachable(url) });
+        const fb = await checkServiceReachable(url);
+        res.json({ online: fb.online, latency: fb.latency });
     }
 });
 
@@ -419,8 +428,8 @@ app.get('/api/:app/status', async (req, res) => {
     }
 
     const url = appInfo.url;
-    const isOnline = await checkServiceReachable(url);
-    res.json({ online: isOnline });
+    const pingResult = await checkServiceReachable(url);
+    res.json(pingResult);
 });
 
 
