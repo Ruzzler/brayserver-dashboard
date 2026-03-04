@@ -42,7 +42,7 @@ const SUBTITLES = [
     "I'm fluent in three languages: English, Sarcasm, and JavaScript."
 ];
 
-export function Header({ config, onSaveConfig = () => { } }: { config?: any, onSaveConfig?: (newConfig: any) => void }) {
+export function Header({ config, onSaveConfig = () => { }, onPreviewConfig = () => { }, onOpenCommandPalette = () => { } }: { config?: any, onSaveConfig?: (newConfig: any) => void, onPreviewConfig?: (newConfig: any) => void, onOpenCommandPalette?: () => void }) {
     const [time, setTime] = useState("");
     const [isDark, setIsDark] = useState(true);
     const [systemStats, setSystemStats] = useState<{ cpu: string, ram: string, disk: string } | null>(null);
@@ -153,15 +153,11 @@ export function Header({ config, onSaveConfig = () => { } }: { config?: any, onS
                 <Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <input
                     type="text"
-                    placeholder="Search apps or the web..."
+                    placeholder="Search the web..."
                     onKeyDown={(e) => {
                         if (e.key === 'Enter') {
                             const query = e.currentTarget.value.trim();
                             if (!query) return;
-
-                            // Check if query exactly matches an app name, if so, we probably don't want to web search
-                            const isAppMatch = config?.apps?.some((a: any) => a.name.toLowerCase().includes(query.toLowerCase()));
-                            if (isAppMatch) return;
 
                             let searchUrl = '';
                             const searchProvider = config?.defaultSearchProvider || 'google';
@@ -201,20 +197,30 @@ export function Header({ config, onSaveConfig = () => { } }: { config?: any, onS
                     className="w-full py-2.5 px-4 pl-10 rounded-full border border-border bg-card text-foreground text-sm backdrop-blur-md transition-all focus:outline-none focus:border-ring focus:bg-white/10 dark:focus:bg-black/10"
                 />
             </div>
+
+            <button
+                onClick={onOpenCommandPalette}
+                title="Search Apps (Ctrl+K)"
+                className="flex-shrink-0 bg-primary text-primary-foreground border border-primary/50 w-auto px-4 h-11 rounded-full flex gap-2 items-center justify-center transition-all hover:-translate-y-1 hover:shadow-lg shadow-sm"
+            >
+                <Icons.Search className="w-5 h-5" />
+                <span className="text-xs font-mono font-bold tracking-wider hidden md:block">⌘K</span>
+            </button>
+
             <button
                 onClick={toggleTheme}
                 className="flex-shrink-0 bg-card border border-border text-muted-foreground w-11 h-11 rounded-full flex items-center justify-center transition-all hover:text-foreground hover:border-muted-foreground hover:-rotate-12 hover:scale-110 backdrop-blur-md"
             >
                 {isDark ? <Icons.Sun className="w-5 h-5" /> : <Icons.Moon className="w-5 h-5" />}
             </button>
-            <SettingsModal config={config} onSave={onSaveConfig} />
+            <SettingsModal config={config} onSave={onSaveConfig} onPreviewConfig={onPreviewConfig} />
         </div>
     );
 
     // Sidebar specifically for layout === 'sidebar'
     const renderSidebar = () => (
         <div className="fixed left-6 top-1/2 -translate-y-1/2 flex flex-col items-center gap-4 p-3 rounded-full bg-card/60 backdrop-blur-2xl border border-border/50 shadow-2xl z-50">
-            <button className="flex-shrink-0 w-11 h-11 rounded-full flex items-center justify-center text-muted-foreground hover:bg-secondary transition-all">
+            <button onClick={onOpenCommandPalette} className="flex-shrink-0 w-11 h-11 rounded-full flex items-center justify-center text-primary bg-primary/10 hover:bg-primary/20 transition-all">
                 <Icons.Search className="w-5 h-5" />
             </button>
             <div className="w-8 h-[1px] bg-border/50"></div>
@@ -222,7 +228,7 @@ export function Header({ config, onSaveConfig = () => { } }: { config?: any, onS
                 {isDark ? <Icons.Sun className="w-5 h-5" /> : <Icons.Moon className="w-5 h-5" />}
             </button>
             <div className="w-8 h-[1px] bg-border/50"></div>
-            <SettingsModal config={config} onSave={onSaveConfig} />
+            <SettingsModal config={config} onSave={onSaveConfig} onPreviewConfig={onPreviewConfig} />
         </div>
     );
 

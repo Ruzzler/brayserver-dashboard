@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0-beta.2] - 2026-03-04
+
+### Added
+- **Command Palette App Launcher**: Separated the "Search Web" input bar from local app filtering. You can now press `Ctrl+K` (or use the new `⌘K` header button) to summon a beautiful, blurred modal. The Command Palette lets you instantly type and filter your local dashboard apps and hit `Enter` to launch them, completely isolating local navigation from global internet searching.
+- **Settings Live Previews**: Rewrote the Appearance configuration state pipeline to support real-time previewing. Changing layout structs or color hues from the dropdowns now instantly alters the entire dashboard UI beneath the modal *without needing to press Save*. 
+- **Deep Color Saturation**: Vastly increased the "surface area" of the selected Primary Theme Colors. Application Cards hover states, borders, active toggles, and even the giant animated background Orbs now physically inherit and reflect the specific HSL theme color you select in Appearance.
+
 ## [0.6.0-beta.1] - 2026-03-04
 
 ### Added

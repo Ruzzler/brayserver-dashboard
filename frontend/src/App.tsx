@@ -6,6 +6,7 @@ import * as Icons from 'lucide-react';
 import { formatIconName } from './lib/utils';
 import { WeatherWidget } from './components/WeatherWidget';
 import { WorkspaceViewer } from './components/WorkspaceViewer';
+import { CommandPalette } from './components/CommandPalette';
 import { GlanceWidget } from './data/apps';
 import { GlanceWidgetsRow } from './components/GlanceWidgets';
 
@@ -129,17 +130,17 @@ function AppCard({ app, style = 'glass', layout = 'grid', size = 'medium', onOpe
 
   // --- Fill Styles ---
   const fillClasses = {
-    glass: "bg-card/40 border border-border/50 backdrop-blur-xl hover:bg-card/80 hover:border-border hover:shadow-2xl hover:-translate-y-1",
-    solid: "bg-card border border-border hover:bg-muted hover:border-foreground/20 shadow-sm hover:shadow-md hover:-translate-y-1",
+    glass: "bg-card/40 border-border/50 backdrop-blur-xl hover:bg-card/80 hover:border-primary/50 border hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1",
+    solid: "bg-card border-border hover:border-primary/50 hover:bg-primary/5 border shadow-sm hover:shadow-md hover:-translate-y-1",
     outline: "bg-transparent border-2 border-border/50 hover:border-primary hover:bg-primary/5 hover:-translate-y-1"
   };
   const activeFill = fillClasses[style as keyof typeof fillClasses] || fillClasses.glass;
 
   const iconBase = `${activeSizes.iconBox} flex items-center justify-center rounded-xl flex-shrink-0 relative z-10 transition-colors duration-300`;
   const iconStyle = {
-    glass: "bg-background/50 border border-border/50 shadow-inner group-hover:bg-background/80",
-    solid: "bg-muted border border-border shadow-sm group-hover:bg-card",
-    outline: "bg-card/50 border border-border/50 group-hover:bg-primary/10"
+    glass: "bg-background/50 border border-border/50 shadow-inner group-hover:bg-primary/10 group-hover:border-primary/30",
+    solid: "bg-muted border border-border shadow-sm group-hover:bg-primary/10 group-hover:border-primary/30",
+    outline: "bg-card/50 border border-border/50 group-hover:bg-primary/10 group-hover:border-primary/30"
   };
   const currentIconStyle = iconStyle[style as keyof typeof iconStyle] || iconStyle.glass;
 
@@ -191,7 +192,11 @@ function AppCard({ app, style = 'glass', layout = 'grid', size = 'medium', onOpe
 
 function App() {
   const [config, setConfig] = useState<Config | null>(null);
+  const [previewConfig, setPreviewConfig] = useState<Config | null>(null);
   const [activeWorkspace, setActiveWorkspace] = useState<AppItem | null>(null);
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+
+  const activeConfig = previewConfig || config;
 
   useEffect(() => {
     fetch('/api/config')
@@ -202,11 +207,11 @@ function App() {
 
   // Update Document Title and Favicon based on Config
   useEffect(() => {
-    if (config) {
-      document.title = config.serverName || "BrayDashy";
+    if (activeConfig) {
+      document.title = activeConfig.serverName || "BrayDashy";
 
       try {
-        const iconKey = config.serverIcon ? formatIconName(config.serverIcon) : 'Server';
+        const iconKey = activeConfig.serverIcon ? formatIconName(activeConfig.serverIcon) : 'Server';
         const IconComp = (Icons as any)[iconKey] || Icons.Server;
         // Render the lucide SVG element to a string and encode it for a Data URI
         const svgString = renderToString(<IconComp size={32} color="white" />);
@@ -225,11 +230,11 @@ function App() {
         console.warn("Could not set dynamic favicon", err);
       }
     }
-  }, [config]);
+  }, [activeConfig]);
 
   // Dynamic Theme Color Injection
   useEffect(() => {
-    if (!config || !config.themeColor) return;
+    if (!activeConfig || !activeConfig.themeColor) return;
     const root = document.documentElement;
 
     const themes: Record<string, { primary: string, ring: string, background?: string }> = {
@@ -253,10 +258,10 @@ function App() {
     };
 
     const isDarkMode = root.classList.contains('dark');
-    const selectedTheme = isDarkMode ? darkThemes[config.themeColor] : themes[config.themeColor];
+    const selectedTheme = isDarkMode ? darkThemes[activeConfig.themeColor] : themes[activeConfig.themeColor];
 
     if (selectedTheme) {
-      if (config.themeColor === 'zinc') {
+      if (activeConfig.themeColor === 'zinc') {
         // Reset to exact Shadcn defaults
         root.style.setProperty('--primary', isDarkMode ? "0 0% 98%" : "240 5.9% 10%");
         root.style.setProperty('--ring', isDarkMode ? "240 4.9% 83.9%" : "240 10% 3.9%");
@@ -265,11 +270,23 @@ function App() {
         root.style.setProperty('--ring', selectedTheme.ring);
       }
     }
-  }, [config?.themeColor]);
+  }, [activeConfig?.themeColor]);
 
-  if (!config) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading Dashboard Data...</div>;
+  // Global Command Palette Shortcut Listener
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        setIsCommandPaletteOpen(open => !open);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
-  const sortedCategories = [...config.categories].sort((a, b) => a.order - b.order);
+  if (!activeConfig) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading Dashboard Data...</div>;
+
+  const sortedCategories = [...activeConfig.categories].sort((a, b) => a.order - b.order);
 
   const handleSaveConfig = async (newConfig: Config) => {
     try {
@@ -280,6 +297,7 @@ function App() {
       });
       if (res.ok) {
         setConfig(newConfig);
+        setPreviewConfig(null); // Clear preview when saved
       }
     } catch (e) {
       console.error("Failed to save config", e);
@@ -288,41 +306,53 @@ function App() {
 
   return (
     <>
-      <BackgroundOrbs />
+      <BackgroundOrbs themeColor={activeConfig?.themeColor} />
       {activeWorkspace && (
         <WorkspaceViewer app={activeWorkspace} onClose={() => setActiveWorkspace(null)} />
       )}
+
+      <CommandPalette
+        open={isCommandPaletteOpen}
+        onOpenChange={setIsCommandPaletteOpen}
+        apps={activeConfig?.apps || []}
+      />
+
       <div className="relative z-10 w-full min-h-screen">
         <div className="max-w-7xl mx-auto px-8 py-12">
-          <Header config={config} onSaveConfig={handleSaveConfig} />
+          <Header
+            config={activeConfig}
+            onSaveConfig={handleSaveConfig}
+            onPreviewConfig={setPreviewConfig}
+            onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
+          />
 
-          {config.glanceWidgets && config.glanceWidgets.length > 0 && (
-            <GlanceWidgetsRow widgets={config.glanceWidgets} />
+          {activeConfig.glanceWidgets && activeConfig.glanceWidgets.length > 0 && (
+            <GlanceWidgetsRow widgets={activeConfig.glanceWidgets} />
           )}
 
-          {config.enableWeather && config.weatherLocation && (
-            <WeatherWidget location={config.weatherLocation} unit={config.weatherUnit || 'F'} />
+          {activeConfig.enableWeather && activeConfig.weatherLocation && (
+            <WeatherWidget location={activeConfig.weatherLocation} unit={activeConfig.weatherUnit || 'F'} />
           )}
 
           <main className="w-full">
             <div className="flex flex-col gap-12">
               {sortedCategories.map(cat => {
-                const categoryApps = config.apps.filter(a => a.categoryId === cat.id);
+                const categoryApps = activeConfig.apps.filter(a => a.categoryId === cat.id);
                 if (categoryApps.length === 0) return null;
 
                 return (
                   <section key={cat.id} className="flex flex-col gap-5">
                     <h2 className="text-xl font-semibold text-muted-foreground border-b border-border pb-2">{cat.name}</h2>
-                    <div className={`grid gap-6 ${config.appCardLayout === 'list' ? 'grid-cols-1' : config.appCardLayout === 'minimal' ? 'grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12' : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'}`}>
+                    <div className={`grid gap-6 ${activeConfig.appCardLayout === 'list' ? 'grid-cols-1' : activeConfig.appCardLayout === 'minimal' ? 'grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12' : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'}`}>
                       {categoryApps.map(app => (
                         <AppCard
                           key={app.id}
                           app={app}
-                          style={config.appCardStyle}
-                          layout={config.appCardLayout}
-                          size={config.appCardSize}
+                          style={activeConfig.appCardStyle}
+                          layout={activeConfig.appCardLayout}
+                          size={activeConfig.appCardSize}
                           onOpenWorkspace={
-                            config.enableWorkspaceMode && !app.ignoreWorkspace
+                            activeConfig.enableWorkspaceMode && !app.ignoreWorkspace
                               ? (appItem) => setActiveWorkspace(appItem)
                               : undefined
                           }

@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Settings, Save, Plus, Trash2, CheckCircle2, XCircle, Loader2 } from 'lucide-react';
 import { ImportWizardModal } from './ImportWizardModal';
 
-export function SettingsModal({ config, onSave }: { config: any, onSave: (newConfig: any) => void }) {
+export function SettingsModal({ config, onSave, onPreviewConfig }: { config: any, onSave: (newConfig: any) => void, onPreviewConfig?: (newConfig: any) => void }) {
     const [open, setOpen] = useState(false);
     const [localConfig, setLocalConfig] = useState(JSON.parse(JSON.stringify(config)));
     const [testStatuses, setTestStatuses] = useState<{ [key: string]: 'idle' | 'testing' | 'success' | 'failed' }>({});
@@ -32,8 +32,20 @@ export function SettingsModal({ config, onSave }: { config: any, onSave: (newCon
 
     // Sync if config prop changes
     React.useEffect(() => {
-        if (open) setLocalConfig(JSON.parse(JSON.stringify(config)));
+        if (open) {
+            setLocalConfig(JSON.parse(JSON.stringify(config)));
+        } else if (onPreviewConfig) {
+            // Revert preview if closed without saving
+            onPreviewConfig(config);
+        }
     }, [config, open]);
+
+    // Broadcast live previews when localConfig changes (only while modal is open)
+    React.useEffect(() => {
+        if (open && onPreviewConfig) {
+            onPreviewConfig(localConfig);
+        }
+    }, [localConfig, open]);
 
     const handleSave = () => {
         onSave(localConfig);
