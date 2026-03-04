@@ -15,7 +15,7 @@ COPY package*.json ./
 RUN npm ci --production
 
 # Copy backend logic
-COPY server.js ./
+COPY backend/server.js ./backend/
 
 # Pre-create config.json if it doesn't exist so Unraid can map it cleanly.
 # If Unraid maps a file here, this gets overwritten by the volume mount.
@@ -25,4 +25,4 @@ COPY config.json ./
 COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
 
 EXPOSE 3000
-CMD ["node", "server.js"]
+CMD ["node", "backend/server.js"]
