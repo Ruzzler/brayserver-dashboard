@@ -5,7 +5,7 @@ import packageJson from './package.json'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: process.env.VITE_BASE_PATH || '/',
+  base: process.env.VITE_DEMO_MODE ? '/braydashy-dashboard/' : '/',
   define: {
     'import.meta.env.VITE_APP_VERSION': JSON.stringify(packageJson.version)
   },
