@@ -276,6 +276,20 @@ export function SettingsModal({ config, onSave, onPreviewConfig }: { config: any
                                         </div>
                                         <p className="text-xs text-muted-foreground mb-4">When enabled, clicking an application opens it inside a dashboard overlay instead of a new tab.</p>
                                     </div>
+                                    <div className="space-y-2 pt-2 border-t border-border mt-4">
+                                        <h4 className="font-semibold text-muted-foreground tracking-wider mb-2">Desktop Pet Integration</h4>
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <input
+                                                type="checkbox"
+                                                id="showDesktopPet"
+                                                checked={localConfig.showDesktopPet !== false}
+                                                onChange={(e) => handleGeneralChange('showDesktopPet', e.target.checked)}
+                                                className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary accent-primary"
+                                            />
+                                            <Label htmlFor="showDesktopPet" className="font-medium cursor-pointer">Enable Free-Roaming Desktop Pet</Label>
+                                        </div>
+                                        <p className="text-xs text-muted-foreground mb-4">When enabled, BMO will wander across your dashboard header doing idle tasks.</p>
+                                    </div>
                                 </div>
                             </CardContent>
                         </Card>
@@ -494,7 +508,6 @@ export function SettingsModal({ config, onSave, onPreviewConfig }: { config: any
                                                     <option value="system_stats" className="bg-popover text-popover-foreground">Local System Stats</option>
                                                     <option value="weather" className="bg-popover text-popover-foreground">Live Weather</option>
                                                     <option value="rss" className="bg-popover text-popover-foreground">RSS Feed</option>
-                                                    <option value="pet" className="bg-popover text-popover-foreground">Interactive Desktop Pet</option>
                                                 </select>
                                             </div>
                                             <div className="flex-[1] space-y-1">

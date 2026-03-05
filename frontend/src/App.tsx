@@ -11,7 +11,7 @@ import { GlanceWidgetsRow } from './components/GlanceWidgets';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, rectSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-
+import { DesktopPet } from './components/DesktopPet';
 interface AppItem {
   id: string;
   name: string;
@@ -44,6 +44,7 @@ interface Config {
   categories: Category[];
   apps: AppItem[];
   glanceWidgets?: GlanceWidget[];
+  showDesktopPet?: boolean;
 }
 
 function SortableAppCard({ id, app, style, layout, size, onOpenWorkspace, isEditMode }: { id: string, app: AppItem, style?: string, layout?: string, size?: string, onOpenWorkspace?: (app: AppItem) => void, isEditMode: boolean }) {
@@ -384,6 +385,10 @@ function App() {
             isEditMode={isEditMode}
             setIsEditMode={setIsEditMode}
           />
+
+          <div className="relative w-full h-0 z-50">
+            {(activeConfig.showDesktopPet !== false) && <DesktopPet />}
+          </div>
 
           {activeConfig.glanceWidgets && activeConfig.glanceWidgets.length > 0 && (
             <GlanceWidgetsRow
