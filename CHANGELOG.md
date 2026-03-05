@@ -5,7 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2026-03-05
+
+### Security
+- **SSRF Protection**: The RSS proxy endpoint now validates all feed URLs, blocking requests to private IP ranges (`10.x`, `192.168.x`, `172.16-31.x`), `localhost`, and cloud metadata endpoints (`169.254.x.x`). Malicious feed URLs are rejected with a clear error.
+- **Body Size Limiting**: Added `100kb` request body limit to the config POST endpoint to prevent memory exhaustion attacks.
+- **Config Write Validation**: The config save endpoint now validates that the request is a proper object with required fields before writing to disk.
+- **Credential Handling Fix**: Fixed `qBittorrent` password parsing — passwords containing `:` characters now split correctly on the first colon only.
+- **Git History Purge**: Removed `config.json` (which contained API keys from `v0.1.0-alpha.1`) from all 59 commits in git history using `git-filter-repo`. API keys have been rotated.
+
+### Changed
+- **Backend Refactor**: Eliminated ~365 lines of copy-paste route handlers. All 9 service integrations (Sonarr, Radarr, Tautulli, AdGuard, etc.) now use a shared `createServiceRoute()` factory + named stat-fetcher functions. Adding a new service is now 2 lines of code.
+- **App.tsx Halved**: Main component refactored from 471 → ~220 lines. Inline component definitions and all `any` type aliases removed.
+- **Central Type System**: Created `frontend/src/types.ts` as the single source of truth for all shared TypeScript interfaces (`Config`, `AppItem`, `Category`, `GlanceWidget`, etc.).
+- **SettingsModal Type Safety**: Replaced all `any` types with proper interfaces. State updaters migrated to `prev =>` functional pattern for correctness under React batching.
+- **Theme Persistence**: Dark/light mode preference now persists across page reloads via `localStorage`.
+- **Header Typed**: `Header.tsx` now uses the `Config` type on all props.
+- **Canvas Dependency**: Moved `canvas` npm package from `dependencies` to `devDependencies` — it is only used by the sprite-sheet generation script and no longer ships in the production Docker image.
+
+### Fixed
+- **Invisible Grip Icons**: Edit-mode drag handles in the Glance Widgets row were always hidden. Fixed by adding `group relative` to the `SortableWidgetItem` wrapper so `group-hover` activates correctly.
+- **Dead AppCard Eliminated**: Removed the duplicate, unused `AppCard` component definition. The single canonical `AppCard.tsx` is now used everywhere.
+- **WorkspaceViewer Crash**: `new URL(app.url).host` would throw on malformed URLs, crashing the workspace panel. Now wrapped in a try/catch.
+- **Unused State Removed**: Removed the `_loading` state variable from `WeatherGlanceWidget` that was declared but never read.
+- **Docker Build Context**: Expanded `.dockerignore` to exclude pixel art source assets, markdown files, and local `config.json` from the Docker build context, reducing image build time and size.
+
 ## [0.7.5] - 2026-03-05
+
 ### Added
 - Refined Coffee Mug pixel art with symmetrical 2x2 eyes and better arm definition.
 - Fixed emote bubble styling to ensure high visibility in both light and dark modes (no more blank bubbles).
