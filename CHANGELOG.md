@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.1] - 2026-03-05
+
+### Changed
+- **Pet Animation Refactor**: Completely replaced the `<svg>` and `<rect>` DOM-heavy mapping loop for the Desktop pets. A new Node.js canvas script now extracts the pet pixel arrays into true `.png` sprite sheets (`public/pets/*.png`), bringing the entire animation process onto the CSS `steps()` thread and removing all React DOM jitter.
+
 ## [0.7.0] - 2026-03-04
 
 ### Added

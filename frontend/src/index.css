@@ -179,3 +179,97 @@
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+/* Base properties for all desktop pet sprites */
+.desktop-pet-sprite {
+  width: 160px;
+  /* 16px * SCALE 10 = 160px */
+  height: 160px;
+  background-repeat: no-repeat;
+  /* Ensure the background images match the size constraints */
+  background-size: auto 160px;
+  /* High contrast scaling for pixel art */
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* Sprite Animations */
+.pet-walk {
+  animation: sprite-walk 0.8s steps(4) infinite;
+}
+
+.pet-idle {
+  animation: sprite-idle 1s steps(1) infinite;
+}
+
+.pet-blink {
+  animation: sprite-blink 0.3s steps(1) infinite;
+}
+
+.pet-inflate {
+  animation: sprite-inflate 1s steps(2) forwards;
+}
+
+.pet-water {
+  animation: sprite-water 0.8s steps(2) infinite;
+}
+
+@keyframes sprite-walk {
+  0% {
+    background-position: 0px 0;
+  }
+
+  100% {
+    background-position: -640px 0;
+  }
+
+  /* 4 frames * 160px */
+}
+
+@keyframes sprite-idle {
+  0% {
+    background-position: 0px 0;
+  }
+
+  100% {
+    background-position: -160px 0;
+  }
+
+  /* 1 frame */
+}
+
+@keyframes sprite-blink {
+  0% {
+    background-position: 0px 0;
+  }
+
+  100% {
+    background-position: -160px 0;
+  }
+}
+
+@keyframes sprite-inflate {
+  0% {
+    background-position: 0px 0;
+  }
+
+  100% {
+    background-position: -320px 0;
+  }
+
+  /* 2 frames */
+}
+
+@keyframes sprite-water {
+  0% {
+    background-position: 0px 0;
+  }
+
+  100% {
+    background-position: -320px 0;
+  }
+
+  /* 2 frames */
+}
