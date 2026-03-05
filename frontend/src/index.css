@@ -106,12 +106,20 @@
   left: -100px;
 }
 
+.orb-1.colorful {
+  background: #4f46e5;
+}
+
 .orb-2 {
   width: 300px;
   height: 300px;
   bottom: 10%;
   right: -50px;
   animation-delay: -5s;
+}
+
+.orb-2.colorful {
+  background: #ec4899;
 }
 
 .orb-3 {
@@ -121,6 +129,10 @@
   left: 40%;
   opacity: 0.3;
   animation-delay: -10s;
+}
+
+.orb-3.colorful {
+  background: #0ea5e9;
 }
 
 @keyframes float {

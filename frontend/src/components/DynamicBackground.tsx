@@ -38,14 +38,23 @@ export function DynamicBackground({ themeColor, backgroundStyle = 'orbs' }: Dyna
         );
     }
 
-    // Default to Orbs
-    const rootClass = themeColor === 'zinc' ? 'bg-muted-foreground' : 'bg-primary';
+    if (backgroundStyle === 'themed_orbs') {
+        const rootClass = themeColor === 'zinc' ? 'bg-muted-foreground' : 'bg-primary';
+        return (
+            <div className="background-orbs transition-colors duration-500 bg-background pointer-events-none overflow-hidden h-screen w-screen fixed inset-0">
+                <div className={`orb orb-1 ${rootClass} transition-colors duration-700`}></div>
+                <div className={`orb orb-2 ${rootClass} transition-colors duration-700`}></div>
+                <div className={`orb orb-3 ${rootClass} transition-colors duration-700 delay-500`}></div>
+            </div>
+        );
+    }
 
+    // Default to Colorful Orbs
     return (
         <div className="background-orbs transition-colors duration-500 bg-background pointer-events-none overflow-hidden h-screen w-screen fixed inset-0">
-            <div className={`orb orb-1 ${rootClass} transition-colors duration-700`}></div>
-            <div className={`orb orb-2 ${rootClass} transition-colors duration-700`}></div>
-            <div className={`orb orb-3 ${rootClass} transition-colors duration-700 delay-500`}></div>
+            <div className="orb orb-1 colorful transition-colors duration-700"></div>
+            <div className="orb orb-2 colorful transition-colors duration-700"></div>
+            <div className="orb orb-3 colorful transition-colors duration-700 delay-500"></div>
         </div>
     );
 }

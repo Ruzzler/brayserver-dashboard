@@ -597,7 +597,8 @@ export function SettingsModal({ config, onSave, onPreviewConfig }: { config: any
                                     <h4 className="font-semibold text-muted-foreground tracking-wider border-b border-border/50 pb-2">Dynamic Backgrounds</h4>
                                     <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                                         {[
-                                            { id: 'orbs', label: 'Floating Orbs', icon: '✨' },
+                                            { id: 'orbs', label: 'Colorful Orbs', icon: '✨' },
+                                            { id: 'themed_orbs', label: 'Themed Orbs', icon: '🎨' },
                                             { id: 'grid', label: 'Blueprint Grid', icon: '▦' },
                                             { id: 'waves', label: 'Waves', icon: '〰' },
                                             { id: 'dots', label: 'Dotted Paint', icon: '⠿' },
