@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.3] - 2026-03-05
+### Added
+- **Pixel Agent Characters**: Integrated 6 new office-themed character variants as companion pets on the dashboard.
+- **Agent Interaction**: Added unique emote responses for agents ("Hello!", "Ping!", "Agreed!", "Ready!") and a dedicated AI state machine for their directional movement.
+- **Vertical Facing Support**: Enhanced the pet engine to support "Up" and "Down" facing states for complex sprites that utilize the full 4-axis animation set.
+
+### Changed
+- **Refined Scaling**: Adjusted the scale and hitbox positioning of Sprout Lands characters (Chicken, Cow) and world objects for better visual harmony.
+- **Companion AI Balance**: Improved the clustering and wandering behavior when multiple pets are active simultaneously.
+
+## [0.7.2] - 2026-03-05
+### Added
+- **Sprout Lands Character**: Integrated the new "Sprout" pixel character with directional movement and interactive actions.
+- **Improved Sprite Engine**: Added support for 2D grid-based spritesheets in `index.css`.
+
 ## [0.7.1] - 2026-03-05
 
 ### Changed

@@ -299,6 +299,7 @@ export function SettingsModal({ config, onSave, onPreviewConfig }: { config: any
                                             >
                                                 <option value="bmo" className="bg-popover text-popover-foreground">BMO (Robot)</option>
                                                 <option value="coffee_mug" className="bg-popover text-popover-foreground">Coffee Mug</option>
+                                                <option value="sprout" className="bg-popover text-popover-foreground">Sprout (Pixel Character)</option>
                                                 <option value="both" className="bg-popover text-popover-foreground">Both (Party!)</option>
                                             </select>
                                         </div>

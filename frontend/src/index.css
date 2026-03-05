@@ -273,3 +273,304 @@
 
   /* 2 frames */
 }
+
+/* Sprout Lands (32x32 at scale 5 = 160px) */
+.sprout-sprite,
+.chicken-sprite,
+.cow-sprite,
+.object-sprite,
+.agent-sprite {
+  width: 160px;
+  height: 160px;
+  background-repeat: no-repeat;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.sprout-sprite {
+  background-size: 640px 640px;
+}
+
+.chicken-sprite {
+  background-size: 640px 320px;
+}
+
+.cow-sprite {
+  background-size: 960px 480px;
+}
+
+.object-sprite {
+  background-size: auto 160px;
+}
+
+.agent-sprite {
+  background-size: 560px 480px;
+  width: 80px;
+  /* 16px * 5 */
+}
+
+/* Chicken Animations (2 rows, 4 columns) */
+.chicken-idle {
+  background-position: 0 0;
+}
+
+.chicken-walk {
+  animation: chicken-walk 0.8s steps(4) infinite;
+}
+
+@keyframes chicken-walk {
+  from {
+    background-position: 0 -160px;
+  }
+
+  to {
+    background-position: -640px -160px;
+  }
+}
+
+/* Cow Animations (3 rows, 3 columns) */
+.cow-idle {
+  background-position: 0 0;
+}
+
+.cow-walk {
+  animation: cow-walk 1.2s steps(3) infinite;
+}
+
+@keyframes cow-walk {
+  from {
+    background-position: 0 -160px;
+  }
+
+  to {
+    background-position: -480px -160px;
+  }
+}
+
+/* Agent Animations (7 frames wide, 3 rows) */
+.agent-idle-down {
+  background-position: -80px 0;
+}
+
+.agent-walk-down {
+  animation: agent-walk-down 0.8s steps(3) infinite;
+}
+
+@keyframes agent-walk-down {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: -240px 0;
+  }
+}
+
+.agent-idle-up {
+  background-position: -80px -160px;
+}
+
+.agent-walk-up {
+  animation: agent-walk-up 0.8s steps(3) infinite;
+}
+
+@keyframes agent-walk-up {
+  0% {
+    background-position: 0 -160px;
+  }
+
+  100% {
+    background-position: -240px -160px;
+  }
+}
+
+.agent-idle-right {
+  background-position: -80px -320px;
+}
+
+.agent-walk-right {
+  animation: agent-walk-right 0.8s steps(3) infinite;
+}
+
+@keyframes agent-walk-right {
+  0% {
+    background-position: 0 -320px;
+  }
+
+  100% {
+    background-position: -240px -320px;
+  }
+}
+
+/* Objects */
+.object-chest-closed {
+  background-position: 0 0;
+}
+
+.object-chest-open {
+  background-position: -160px 0;
+}
+
+.object-plant-short {
+  background-position: 0 0;
+}
+
+.object-plant-tall {
+  background-position: -160px 0;
+}
+
+/* Emote / Thought Buble */
+.emote-bubble {
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  border: 2px solid #333;
+  border-radius: 12px;
+  padding: 4px 8px;
+  font-size: 14px;
+  font-weight: bold;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 50;
+  animation: float-up-fade 2s ease-out forwards;
+}
+
+.emote-bubble::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #333;
+}
+
+@keyframes float-up-fade {
+  0% {
+    transform: translate(-50%, 0);
+    opacity: 0;
+  }
+
+  20% {
+    transform: translate(-50%, -10px);
+    opacity: 1;
+  }
+
+  80% {
+    transform: translate(-50%, -15px);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(-50%, -25px);
+    opacity: 0;
+  }
+}
+
+.sprout-idle-down {
+  background-position: 0 0;
+}
+
+.sprout-idle-up {
+  background-position: 0 -160px;
+}
+
+.sprout-idle-left {
+  background-position: 0 -320px;
+}
+
+.sprout-idle-right {
+  background-position: 0 -480px;
+}
+
+.sprout-walk-down {
+  animation: sprout-row-0 0.8s steps(4) infinite;
+}
+
+.sprout-walk-up {
+  animation: sprout-row-1 0.8s steps(4) infinite;
+}
+
+.sprout-walk-left {
+  animation: sprout-row-2 0.8s steps(4) infinite;
+}
+
+.sprout-walk-right {
+  animation: sprout-row-3 0.8s steps(4) infinite;
+}
+
+/* Action animations for Sprout */
+.sprout-axe {
+  animation: sprout-action 0.6s steps(2) forwards;
+}
+
+.sprout-pickaxe {
+  animation: sprout-action 0.6s steps(2) forwards;
+}
+
+.sprout-water {
+  animation: sprout-action 0.6s steps(2) forwards;
+}
+
+@keyframes sprout-row-0 {
+  from {
+    background-position-x: 0;
+    background-position-y: 0;
+  }
+
+  to {
+    background-position-x: -640px;
+    background-position-y: 0;
+  }
+}
+
+@keyframes sprout-row-1 {
+  from {
+    background-position-x: 0;
+    background-position-y: -160px;
+  }
+
+  to {
+    background-position-x: -640px;
+    background-position-y: -160px;
+  }
+}
+
+@keyframes sprout-row-2 {
+  from {
+    background-position-x: 0;
+    background-position-y: -320px;
+  }
+
+  to {
+    background-position-x: -640px;
+    background-position-y: -320px;
+  }
+}
+
+@keyframes sprout-row-3 {
+  from {
+    background-position-x: 0;
+    background-position-y: -480px;
+  }
+
+  to {
+    background-position-x: -640px;
+    background-position-y: -480px;
+  }
+}
+
+@keyframes sprout-action {
+  from {
+    background-position-x: 0;
+  }
+
+  to {
+    background-position-x: -320px;
+  }
+}
