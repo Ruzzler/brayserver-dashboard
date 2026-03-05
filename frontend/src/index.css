@@ -181,21 +181,60 @@
 }
 
 /* Base properties for all desktop pet sprites */
-.desktop-pet-sprite {
-  width: 160px;
-  /* 16px * SCALE 10 = 160px */
-  height: 160px;
+.bmo-sprite,
+.coffee-sprite,
+.sprout-sprite,
+.chicken-sprite,
+.cow-sprite,
+.object-sprite {
+  width: 64px;
+  height: 64px;
   background-repeat: no-repeat;
-  /* Ensure the background images match the size constraints */
-  background-size: auto 160px;
-  /* High contrast scaling for pixel art */
   image-rendering: -moz-crisp-edges;
   image-rendering: -webkit-crisp-edges;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
 }
 
-/* Sprite Animations */
+.agent-sprite {
+  width: 32px;
+  height: 64px;
+  background-repeat: no-repeat;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* Base Sprite Sheets (2.0x Scaled) */
+.bmo-sprite,
+.coffee-sprite {
+  background-size: auto 64px;
+}
+
+.sprout-sprite {
+  background-size: 256px 256px;
+}
+
+.chicken-sprite {
+  background-size: 256px 128px;
+}
+
+.cow-sprite {
+  background-size: 384px 192px;
+}
+
+.object-sprite {
+  background-size: auto 64px;
+}
+
+.agent-sprite {
+  background-size: 224px 192px;
+}
+
+/* ======== ANIMATIONS ======== */
+
+/* BMO / Coffee Animations */
 .pet-walk {
   animation: sprite-walk 0.8s steps(4) infinite;
 }
@@ -222,10 +261,8 @@
   }
 
   100% {
-    background-position: -640px 0;
+    background-position: -256px 0;
   }
-
-  /* 4 frames * 160px */
 }
 
 @keyframes sprite-idle {
@@ -234,10 +271,8 @@
   }
 
   100% {
-    background-position: -160px 0;
+    background-position: -64px 0;
   }
-
-  /* 1 frame */
 }
 
 @keyframes sprite-blink {
@@ -246,7 +281,7 @@
   }
 
   100% {
-    background-position: -160px 0;
+    background-position: -64px 0;
   }
 }
 
@@ -256,10 +291,8 @@
   }
 
   100% {
-    background-position: -320px 0;
+    background-position: -128px 0;
   }
-
-  /* 2 frames */
 }
 
 @keyframes sprite-water {
@@ -268,50 +301,11 @@
   }
 
   100% {
-    background-position: -320px 0;
+    background-position: -128px 0;
   }
-
-  /* 2 frames */
 }
 
-/* Sprout Lands (32x32 at scale 5 = 160px) */
-.sprout-sprite,
-.chicken-sprite,
-.cow-sprite,
-.object-sprite,
-.agent-sprite {
-  width: 160px;
-  height: 160px;
-  background-repeat: no-repeat;
-  image-rendering: -moz-crisp-edges;
-  image-rendering: -webkit-crisp-edges;
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
-}
-
-.sprout-sprite {
-  background-size: 640px 640px;
-}
-
-.chicken-sprite {
-  background-size: 640px 320px;
-}
-
-.cow-sprite {
-  background-size: 960px 480px;
-}
-
-.object-sprite {
-  background-size: auto 160px;
-}
-
-.agent-sprite {
-  background-size: 560px 480px;
-  width: 80px;
-  /* 16px * 5 */
-}
-
-/* Chicken Animations (2 rows, 4 columns) */
+/* Chicken Animations */
 .chicken-idle {
   background-position: 0 0;
 }
@@ -322,15 +316,15 @@
 
 @keyframes chicken-walk {
   from {
-    background-position: 0 -160px;
+    background-position: 0 -64px;
   }
 
   to {
-    background-position: -640px -160px;
+    background-position: -256px -64px;
   }
 }
 
-/* Cow Animations (3 rows, 3 columns) */
+/* Cow Animations */
 .cow-idle {
   background-position: 0 0;
 }
@@ -341,66 +335,11 @@
 
 @keyframes cow-walk {
   from {
-    background-position: 0 -160px;
+    background-position: 0 -64px;
   }
 
   to {
-    background-position: -480px -160px;
-  }
-}
-
-/* Agent Animations (7 frames wide, 3 rows) */
-.agent-idle-down {
-  background-position: -80px 0;
-}
-
-.agent-walk-down {
-  animation: agent-walk-down 0.8s steps(3) infinite;
-}
-
-@keyframes agent-walk-down {
-  0% {
-    background-position: 0 0;
-  }
-
-  100% {
-    background-position: -240px 0;
-  }
-}
-
-.agent-idle-up {
-  background-position: -80px -160px;
-}
-
-.agent-walk-up {
-  animation: agent-walk-up 0.8s steps(3) infinite;
-}
-
-@keyframes agent-walk-up {
-  0% {
-    background-position: 0 -160px;
-  }
-
-  100% {
-    background-position: -240px -160px;
-  }
-}
-
-.agent-idle-right {
-  background-position: -80px -320px;
-}
-
-.agent-walk-right {
-  animation: agent-walk-right 0.8s steps(3) infinite;
-}
-
-@keyframes agent-walk-right {
-  0% {
-    background-position: 0 -320px;
-  }
-
-  100% {
-    background-position: -240px -320px;
+    background-position: -192px -64px;
   }
 }
 
@@ -410,7 +349,7 @@
 }
 
 .object-chest-open {
-  background-position: -160px 0;
+  background-position: -64px 0;
 }
 
 .object-plant-short {
@@ -418,17 +357,206 @@
 }
 
 .object-plant-tall {
-  background-position: -160px 0;
+  background-position: -64px 0;
 }
 
-/* Emote / Thought Buble */
+/* Sprout Animations */
+.sprout-idle-down {
+  background-position: 0 0;
+}
+
+.sprout-idle-up {
+  background-position: 0 -64px;
+}
+
+.sprout-idle-left {
+  background-position: 0 -128px;
+}
+
+.sprout-idle-right {
+  background-position: 0 -192px;
+}
+
+.sprout-walk-down {
+  animation: sprout-row-0 0.8s steps(4) infinite;
+}
+
+.sprout-walk-up {
+  animation: sprout-row-1 0.8s steps(4) infinite;
+}
+
+.sprout-walk-left {
+  animation: sprout-row-2 0.8s steps(4) infinite;
+}
+
+.sprout-walk-right {
+  animation: sprout-row-3 0.8s steps(4) infinite;
+}
+
+.sprout-axe {
+  animation: sprout-action 0.6s steps(2) forwards;
+}
+
+.sprout-pickaxe {
+  animation: sprout-action 0.6s steps(2) forwards;
+}
+
+.sprout-water {
+  animation: sprout-action 0.6s steps(2) forwards;
+}
+
+@keyframes sprout-row-0 {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: -256px 0;
+  }
+}
+
+@keyframes sprout-row-1 {
+  from {
+    background-position: 0 -64px;
+  }
+
+  to {
+    background-position: -256px -64px;
+  }
+}
+
+@keyframes sprout-row-2 {
+  from {
+    background-position: 0 -128px;
+  }
+
+  to {
+    background-position: -256px -128px;
+  }
+}
+
+@keyframes sprout-row-3 {
+  from {
+    background-position: 0 -192px;
+  }
+
+  to {
+    background-position: -256px -192px;
+  }
+}
+
+@keyframes sprout-action {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: -128px 0;
+  }
+}
+
+/* Agent Animations (Proper 4-frame cycle without sliding) */
+.agent-idle-down {
+  background-position: -32px 0;
+}
+
+.agent-walk-down {
+  animation: agent-walk-down 0.8s infinite;
+}
+
+@keyframes agent-walk-down {
+
+  0%,
+  24.9% {
+    background-position: 0 0;
+  }
+
+  25%,
+  49.9% {
+    background-position: -32px 0;
+  }
+
+  50%,
+  74.9% {
+    background-position: -64px 0;
+  }
+
+  75%,
+  100% {
+    background-position: -32px 0;
+  }
+}
+
+.agent-idle-up {
+  background-position: -32px -64px;
+}
+
+.agent-walk-up {
+  animation: agent-walk-up 0.8s infinite;
+}
+
+@keyframes agent-walk-up {
+
+  0%,
+  24.9% {
+    background-position: 0 -64px;
+  }
+
+  25%,
+  49.9% {
+    background-position: -32px -64px;
+  }
+
+  50%,
+  74.9% {
+    background-position: -64px -64px;
+  }
+
+  75%,
+  100% {
+    background-position: -32px -64px;
+  }
+}
+
+.agent-idle-right {
+  background-position: -32px -128px;
+}
+
+.agent-walk-right {
+  animation: agent-walk-right 0.8s infinite;
+}
+
+@keyframes agent-walk-right {
+
+  0%,
+  24.9% {
+    background-position: 0 -128px;
+  }
+
+  25%,
+  49.9% {
+    background-position: -32px -128px;
+  }
+
+  50%,
+  74.9% {
+    background-position: -64px -128px;
+  }
+
+  75%,
+  100% {
+    background-position: -32px -128px;
+  }
+}
+
+/* Emote Bubbles */
 .emote-bubble {
   position: absolute;
   top: -40px;
   left: 50%;
   transform: translateX(-50%);
   background: white;
-  border: 2px solid #333;
+  border: 4px solid #333;
   border-radius: 12px;
   padding: 4px 8px;
   font-size: 14px;
@@ -442,7 +570,7 @@
 .emote-bubble::after {
   content: "";
   position: absolute;
-  bottom: -6px;
+  bottom: -9px;
   left: 50%;
   transform: translateX(-50%);
   border-left: 6px solid transparent;
@@ -469,108 +597,5 @@
   100% {
     transform: translate(-50%, -25px);
     opacity: 0;
-  }
-}
-
-.sprout-idle-down {
-  background-position: 0 0;
-}
-
-.sprout-idle-up {
-  background-position: 0 -160px;
-}
-
-.sprout-idle-left {
-  background-position: 0 -320px;
-}
-
-.sprout-idle-right {
-  background-position: 0 -480px;
-}
-
-.sprout-walk-down {
-  animation: sprout-row-0 0.8s steps(4) infinite;
-}
-
-.sprout-walk-up {
-  animation: sprout-row-1 0.8s steps(4) infinite;
-}
-
-.sprout-walk-left {
-  animation: sprout-row-2 0.8s steps(4) infinite;
-}
-
-.sprout-walk-right {
-  animation: sprout-row-3 0.8s steps(4) infinite;
-}
-
-/* Action animations for Sprout */
-.sprout-axe {
-  animation: sprout-action 0.6s steps(2) forwards;
-}
-
-.sprout-pickaxe {
-  animation: sprout-action 0.6s steps(2) forwards;
-}
-
-.sprout-water {
-  animation: sprout-action 0.6s steps(2) forwards;
-}
-
-@keyframes sprout-row-0 {
-  from {
-    background-position-x: 0;
-    background-position-y: 0;
-  }
-
-  to {
-    background-position-x: -640px;
-    background-position-y: 0;
-  }
-}
-
-@keyframes sprout-row-1 {
-  from {
-    background-position-x: 0;
-    background-position-y: -160px;
-  }
-
-  to {
-    background-position-x: -640px;
-    background-position-y: -160px;
-  }
-}
-
-@keyframes sprout-row-2 {
-  from {
-    background-position-x: 0;
-    background-position-y: -320px;
-  }
-
-  to {
-    background-position-x: -640px;
-    background-position-y: -320px;
-  }
-}
-
-@keyframes sprout-row-3 {
-  from {
-    background-position-x: 0;
-    background-position-y: -480px;
-  }
-
-  to {
-    background-position-x: -640px;
-    background-position-y: -480px;
-  }
-}
-
-@keyframes sprout-action {
-  from {
-    background-position-x: 0;
-  }
-
-  to {
-    background-position-x: -320px;
   }
 }

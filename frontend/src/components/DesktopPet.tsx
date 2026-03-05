@@ -268,7 +268,8 @@ export function DesktopPet({ petType = "bmo" }: { petType?: "bmo" | "coffee_mug"
             return `sprout-idle-${entity.direction}`;
         }
         if (entity.type === 'agent') {
-            const suffix = entity.state === 'walk' ? `walk-${entity.direction === 'up' ? 'up' : entity.direction === 'down' ? 'down' : 'right'}` : `idle-${entity.direction === 'up' ? 'up' : 'down'}`;
+            const facingIdx = entity.direction === 'left' ? 'right' : entity.direction;
+            const suffix = entity.state === 'walk' ? `walk-${facingIdx}` : `idle-${facingIdx}`;
             return `agent-${suffix}`;
         }
         if (entity.type === 'chicken') return entity.state === 'walk' ? 'chicken-walk' : 'chicken-idle';
@@ -302,7 +303,6 @@ export function DesktopPet({ petType = "bmo" }: { petType?: "bmo" | "coffee_mug"
                             className={`${entity.type}-sprite ${getSpriteClass(entity)}`}
                             style={{
                                 backgroundImage: getSpriteSheet(entity),
-                                transform: 'scale(0.4)',
                                 transformOrigin: 'bottom center'
                             }}
                         />
