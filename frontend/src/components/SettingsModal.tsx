@@ -207,13 +207,13 @@ export function SettingsModal({ config, onSave, onPreviewConfig }: { config: any
                 </DialogHeader>
 
                 <Tabs defaultValue="general" className="w-full mt-4">
-                    <TabsList className="grid w-full grid-cols-6 mb-8">
-                        <TabsTrigger value="general">General</TabsTrigger>
-                        <TabsTrigger value="appearance">Appearance</TabsTrigger>
-                        <TabsTrigger value="categories">Categories</TabsTrigger>
-                        <TabsTrigger value="apps">Apps</TabsTrigger>
-                        <TabsTrigger value="integrations">API Keys</TabsTrigger>
-                        <TabsTrigger value="widgets">Widgets</TabsTrigger>
+                    <TabsList className="flex w-full overflow-x-auto mb-8 justify-start sm:justify-center h-auto flex-nowrap shrink-0 snap-x p-1 gap-1 custom-scrollbar">
+                        <TabsTrigger value="general" className="snap-start shrink-0">General</TabsTrigger>
+                        <TabsTrigger value="appearance" className="snap-start shrink-0">Appearance</TabsTrigger>
+                        <TabsTrigger value="categories" className="snap-start shrink-0">Categories</TabsTrigger>
+                        <TabsTrigger value="apps" className="snap-start shrink-0">Apps</TabsTrigger>
+                        <TabsTrigger value="integrations" className="snap-start shrink-0">API Keys</TabsTrigger>
+                        <TabsTrigger value="widgets" className="snap-start shrink-0">Widgets</TabsTrigger>
                     </TabsList>
 
                     {/* General Tab */}

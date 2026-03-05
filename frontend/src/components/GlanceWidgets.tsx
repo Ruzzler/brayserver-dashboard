@@ -108,14 +108,188 @@ function RSSWidget({ widget, isEditMode, isLarge }: { widget: GlanceWidget, isEd
     );
 }
 
+const PET_COLORS: Record<string, string> = {
+    'B': 'hsl(var(--foreground))',
+    'P': '#2dd4bf',
+    'S': '#d9f99d',
+    'F': '#064e3b',
+    'R': '#ef4444',
+    'Y': '#eab308',
+    'U': '#3b82f6',
+    'H': '#f43f5e',
+};
+
+const PET_FRAMES = {
+    idle: [
+        "                ",
+        "   BBBBBBBBBB   ",
+        "  BPPPPPPPPPPB  ",
+        "  BSSSSSSSSSSB  ",
+        "  BSSFFSSFFSSB  ",
+        "  BSSFFSSFFSSB  ",
+        "  BSSSSSSSSSSB  ",
+        "  BSSSFSSFSSSB  ",
+        "  BSSSFFFFSSSB  ",
+        "  BSSSSSSSSSSB  ",
+        "  BPPPPPPPPPPB  ",
+        "  BPRRBPPUUPPB  ",
+        "  BPRRBPPUUPPB  ",
+        "  BPPPPPPYYPPB  ",
+        "   BBBBBBBBBB   ",
+        "   BB      BB   "
+    ],
+    blink: [
+        "                ",
+        "   BBBBBBBBBB   ",
+        "  BPPPPPPPPPPB  ",
+        "  BSSSSSSSSSSB  ",
+        "  BSSSSSSSSSSB  ",
+        "  BSSSSSSSSSSB  ",
+        "  BSSFFSSFFSSB  ",
+        "  BSSSFSSFSSSB  ",
+        "  BSSSFFFFSSSB  ",
+        "  BSSSSSSSSSSB  ",
+        "  BPPPPPPPPPPB  ",
+        "  BPRRBPPUUPPB  ",
+        "  BPRRBPPUUPPB  ",
+        "  BPPPPPPYYPPB  ",
+        "   BBBBBBBBBB   ",
+        "   BB      BB   "
+    ],
+    look_left: [
+        "                ",
+        "   BBBBBBBBBB   ",
+        "  BPPPPPPPPPPB  ",
+        "  BSSSSSSSSSSB  ",
+        "  BSFFSSFFSSSB  ",
+        "  BSFFSSFFSSSB  ",
+        "  BSSSSSSSSSSB  ",
+        "  BSSFSSFSSSSB  ",
+        "  BSSFFFFSSSSB  ",
+        "  BSSSSSSSSSSB  ",
+        "  BPPPPPPPPPPB  ",
+        "  BPRRBPPUUPPB  ",
+        "  BPRRBPPUUPPB  ",
+        "  BPPPPPPYYPPB  ",
+        "   BBBBBBBBBB   ",
+        "   BB      BB   "
+    ],
+    look_right: [
+        "                ",
+        "   BBBBBBBBBB   ",
+        "  BPPPPPPPPPPB  ",
+        "  BSSSSSSSSSSB  ",
+        "  BSSSFFSSFFSB  ",
+        "  BSSSFFSSFFSB  ",
+        "  BSSSSSSSSSSB  ",
+        "  BSSSSFSSFSSB  ",
+        "  BSSSSFFFFSSB  ",
+        "  BSSSSSSSSSSB  ",
+        "  BPPPPPPPPPPB  ",
+        "  BPRRBPPUUPPB  ",
+        "  BPRRBPPUUPPB  ",
+        "  BPPPPPPYYPPB  ",
+        "   BBBBBBBBBB   ",
+        "   BB      BB   "
+    ],
+    happy1: [
+        "                ",
+        "   BBBBBBBBBB   ",
+        "  BPPPPPPPPPPB  ",
+        "  BSSSSSSSSSSB  ",
+        "  BSSFFSSFFSSB  ",
+        "  BSFSSFSSFSSB  ",
+        "  BSSSSSSSSSSB  ",
+        "  BSSFFFFFFSSB  ",
+        "  BSSFFFFFFSSB  ",
+        "  BSSSSSSSSSSB  ",
+        "B BPPPPPPPPPPB B",
+        "B BPRRBPPUUPPB B",
+        "  BPRRBPPUUPPB  ",
+        "  BPPPPPPYYPPB  ",
+        "   BBBBBBBBBB   ",
+        "    BB    BB    "
+    ],
+    happy2: [
+        "                ",
+        "   BBBBBBBBBB   ",
+        "  BPPPPPPPPPPB  ",
+        "  BSSSSSSSSSSB  ",
+        "  BSFSSFSSFSSB  ",
+        "  BSSFFSSFFSSB  ",
+        "  BSSSSSSSSSSB  ",
+        "  BSSFFFFFFSSB  ",
+        "  BSSFSSSSFFSB  ",
+        "  BSSSSSSSSSSB  ",
+        "  BPPPPPPPPPPB  ",
+        "  BPRRBPPUUPPB  ",
+        "B BPRRBPPUUPPB B",
+        "B BPPPPPPYYPPB B",
+        "   BBBBBBBBBB   ",
+        "     BB  BB     "
+    ]
+};
+
+const PixelFrame = ({ frame }: { frame: string[] }) => {
+    return (
+        <svg viewBox="0 0 16 16" className="w-full h-full drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)] dark:drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)] transition-transform duration-100" style={{ shapeRendering: 'crispEdges' }}>
+            {frame.map((row, y) =>
+                row.split('').map((char, x) => (
+                    PET_COLORS[char] ? <rect key={`${x}-${y}`} x={x} y={y} width="1.05" height="1.05" fill={PET_COLORS[char]} /> : null
+                ))
+            )}
+        </svg>
+    );
+};
+
 function PetWidget({ isEditMode, isLarge }: { isEditMode?: boolean, isLarge?: boolean }) {
     const [interactions, setInteractions] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
+    const [currentFrame, setCurrentFrame] = useState<'idle' | 'blink' | 'look_left' | 'look_right' | 'happy1' | 'happy2'>('idle');
+
+    useEffect(() => {
+        let timeout: NodeJS.Timeout;
+        const loop = () => {
+            if (interactions > 0) {
+                setCurrentFrame(prev => prev === 'happy1' ? 'happy2' : 'happy1');
+                timeout = setTimeout(loop, 200 - Math.min(interactions * 20, 100));
+            } else {
+                const rand = Math.random();
+                if (rand > 0.8) {
+                    setCurrentFrame('blink');
+                    timeout = setTimeout(() => {
+                        setCurrentFrame('idle');
+                        timeout = setTimeout(loop, 2000 + Math.random() * 3000);
+                    }, 150);
+                } else if (rand > 0.6) {
+                    setCurrentFrame('look_left');
+                    timeout = setTimeout(() => {
+                        setCurrentFrame('look_right');
+                        timeout = setTimeout(() => {
+                            setCurrentFrame('idle');
+                            timeout = setTimeout(loop, 2000 + Math.random() * 2000);
+                        }, 500);
+                    }, 500);
+                } else if (rand > 0.4) {
+                    setCurrentFrame('happy1');
+                    timeout = setTimeout(() => {
+                        setCurrentFrame('idle');
+                        timeout = setTimeout(loop, 2000 + Math.random() * 2000);
+                    }, 400);
+                } else {
+                    setCurrentFrame('idle');
+                    timeout = setTimeout(loop, 1000 + Math.random() * 2000);
+                }
+            }
+        };
+        loop();
+        return () => clearTimeout(timeout);
+    }, [interactions]);
 
     const handleClick = () => {
         if (isEditMode) return;
         setInteractions(prev => Math.min(prev + 1, 5));
-        setTimeout(() => setInteractions(prev => Math.max(0, prev - 1)), 3000);
+        setTimeout(() => setInteractions(prev => Math.max(0, prev - 1)), interactions > 3 ? 5000 : 3000);
     };
 
     return (
@@ -127,18 +301,15 @@ function PetWidget({ isEditMode, isLarge }: { isEditMode?: boolean, isLarge?: bo
         >
             <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
 
-            <div className={`relative transition-all duration-300 ${isLarge ? 'scale-150' : ''}`}>
-                <img
-                    src="/mascot.png"
-                    alt="Dashboard Pet"
-                    className={`h-20 w-20 object-contain transition-all duration-300 ${isHovered ? 'scale-110 drop-shadow-md -translate-y-1' : ''} ${interactions > 0 ? 'animate-[bounce_0.5s_infinite]' : ''}`}
-                    style={{ animationDuration: interactions > 0 ? `${0.8 - (interactions * 0.1)}s` : '0s' }}
-                />
+            <div className={`relative transition-transform duration-300 w-20 h-20 flex items-center justify-center ${isLarge ? 'scale-150' : ''}`}>
+                <div className={`w-full h-full transition-transform duration-300 ${isHovered && interactions === 0 ? '-translate-y-1 scale-105' : ''}`}>
+                    <PixelFrame frame={PET_FRAMES[currentFrame]} />
+                </div>
 
                 {/* Floating Hearts when clicked */}
                 {interactions > 0 && Array.from({ length: interactions }).map((_, i) => (
                     <Icons.Heart
-                        key={i}
+                        key={`heart-${i}`}
                         className="absolute text-rose-500 w-4 h-4 fill-rose-500 animate-[ping_1s_ease-out_forwards]"
                         style={{
                             top: `${Math.random() * -20}%`,
