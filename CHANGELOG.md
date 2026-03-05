@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.5] - 2026-03-05
+### Added
+- Refined Coffee Mug pixel art with symmetrical 2x2 eyes and better arm definition.
+- Fixed emote bubble styling to ensure high visibility in both light and dark modes (no more blank bubbles).
+- Removed obsolete 'Pixel Character' source folder.
+
 ## [0.7.4] - 2026-03-05
 ### Removed
 - **Sprout Characters**: Removed all Sprout Lands character assets (Sprout, Chicken, Cow) and world objects.
