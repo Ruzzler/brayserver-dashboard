@@ -299,6 +299,7 @@ export function SettingsModal({ config, onSave, onPreviewConfig }: { config: any
                                             >
                                                 <option value="bmo" className="bg-popover text-popover-foreground">BMO (Robot)</option>
                                                 <option value="coffee_mug" className="bg-popover text-popover-foreground">Coffee Mug</option>
+                                                <option value="both" className="bg-popover text-popover-foreground">Both (Mascot Party!)</option>
                                             </select>
                                         </div>
                                         <p className="text-xs text-muted-foreground mb-4">When enabled, these little guys will wander across your dashboard header doing idle tasks.</p>

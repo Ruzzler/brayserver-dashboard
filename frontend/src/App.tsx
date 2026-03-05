@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { renderToString } from 'react-dom/server';
 import { DynamicBackground } from './components/DynamicBackground';
 import { Header } from './components/Header';
@@ -12,6 +12,7 @@ import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, us
 import { arrayMove, SortableContext, rectSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { DesktopPet } from './components/DesktopPet';
+
 interface AppItem {
   id: string;
   name: string;
@@ -20,6 +21,7 @@ interface AppItem {
   icon: string;
   categoryId: string;
   ignoreWorkspace?: boolean;
+  widgetPreferences?: string[];
 }
 
 interface Category {
@@ -45,7 +47,9 @@ interface Config {
   apps: AppItem[];
   glanceWidgets?: GlanceWidget[];
   showDesktopPet?: boolean;
-  desktopPetType?: "bmo" | "coffee_mug" | "sprout" | "both";
+  desktopPetType?: "bmo" | "coffee_mug" | "both";
+  defaultSearchProvider?: string;
+  enableWorkspaceMode_old?: boolean; // legacy typo handling if needed
 }
 
 function SortableAppCard({ id, app, style, layout, size, onOpenWorkspace, isEditMode }: { id: string, app: AppItem, style?: string, layout?: string, size?: string, onOpenWorkspace?: (app: AppItem) => void, isEditMode: boolean }) {
@@ -247,7 +251,6 @@ function App() {
       try {
         const iconKey = activeConfig.serverIcon ? formatIconName(activeConfig.serverIcon) : 'Server';
         const IconComp = (Icons as any)[iconKey] || Icons.Server;
-        // Render the lucide SVG element to a string and encode it for a Data URI
         const svgString = renderToString(<IconComp size={32} color="white" />);
         const encodedSvg = encodeURIComponent(svgString);
         const dataUri = `data:image/svg+xml,${encodedSvg}`;
@@ -296,7 +299,6 @@ function App() {
 
     if (selectedTheme) {
       if (activeConfig.themeColor === 'zinc') {
-        // Reset to exact Shadcn defaults
         root.style.setProperty('--primary', isDarkMode ? "0 0% 98%" : "240 5.9% 10%");
         root.style.setProperty('--ring', isDarkMode ? "240 4.9% 83.9%" : "240 10% 3.9%");
       } else {
@@ -323,10 +325,6 @@ function App() {
     useSensor(KeyboardSensor)
   );
 
-  if (!activeConfig) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading Dashboard Data...</div>;
-
-  const sortedCategories = [...activeConfig.categories].sort((a, b) => a.order - b.order);
-
   const handleSaveConfig = async (newConfig: Config) => {
     try {
       const res = await fetch('/api/config', {
@@ -336,7 +334,7 @@ function App() {
       });
       if (res.ok) {
         setConfig(newConfig);
-        setPreviewConfig(null); // Clear preview when saved
+        setPreviewConfig(null);
       }
     } catch (e) {
       console.error("Failed to save config", e);
@@ -344,24 +342,27 @@ function App() {
   };
 
   const handleWidgetsReorder = (newWidgetsArray: GlanceWidget[]) => {
-    const updatedConfig = { ...activeConfig, glanceWidgets: newWidgetsArray };
+    const updatedConfig = { ...activeConfig!, glanceWidgets: newWidgetsArray };
     handleSaveConfig(updatedConfig);
   };
 
   const handleAppReorder = (_categoryId: string, event: DragEndEvent) => {
     const { active, over } = event;
     if (active.id !== over?.id && over) {
-      // Find the old and new indices *across the entire apps array*
-      const oldIndex = activeConfig.apps.findIndex(a => a.id === active.id);
-      const newIndex = activeConfig.apps.findIndex(a => a.id === over.id);
-
-      // Only re-sort if they are swapping within the SAME category.
-      // Easiest is to just re-sort the global array
-      const newAppsArray = arrayMove(activeConfig.apps, oldIndex, newIndex);
-      const updatedConfig = { ...activeConfig, apps: newAppsArray };
+      const oldIndex = activeConfig!.apps.findIndex(a => a.id === active.id);
+      const newIndex = activeConfig!.apps.findIndex(a => a.id === over.id);
+      const newAppsArray = arrayMove(activeConfig!.apps, oldIndex, newIndex);
+      const updatedConfig = { ...activeConfig!, apps: newAppsArray };
       handleSaveConfig(updatedConfig);
     }
   };
+
+  const sortedCategories = useMemo(() => {
+    if (!activeConfig) return [];
+    return [...activeConfig.categories].sort((a, b) => a.order - b.order);
+  }, [activeConfig]);
+
+  if (!activeConfig) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading Dashboard Data...</div>;
 
   return (
     <>
@@ -387,11 +388,6 @@ function App() {
             setIsEditMode={setIsEditMode}
           />
 
-          <div className="relative w-full h-0 z-50">
-            {(activeConfig.showDesktopPet !== false && (activeConfig.desktopPetType === 'bmo' || activeConfig.desktopPetType === 'both' || !activeConfig.desktopPetType)) && <DesktopPet petType="bmo" />}
-            {(activeConfig.showDesktopPet !== false && (activeConfig.desktopPetType === 'coffee_mug' || activeConfig.desktopPetType === 'both')) && <DesktopPet petType="coffee_mug" />}
-          </div>
-
           {activeConfig.glanceWidgets && activeConfig.glanceWidgets.length > 0 && (
             <GlanceWidgetsRow
               widgets={activeConfig.glanceWidgets}
@@ -402,38 +398,55 @@ function App() {
 
           <main className="w-full">
             <div className="flex flex-col gap-12">
-              {sortedCategories.map(cat => {
-                const categoryApps = activeConfig.apps.filter(a => a.categoryId === cat.id);
-                if (categoryApps.length === 0) return null;
-
-                return (
-                  <section key={cat.id} className="flex flex-col gap-5">
-                    <h2 className="text-xl font-semibold text-muted-foreground border-b border-border pb-2">{cat.name}</h2>
-                    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleAppReorder(cat.id, e)}>
-                      <SortableContext items={categoryApps.map(a => a.id)} strategy={rectSortingStrategy}>
-                        <div className={`grid gap-6 ${activeConfig.appCardLayout === 'list' ? 'grid-cols-1' : activeConfig.appCardLayout === 'minimal' ? 'grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12' : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'}`}>
-                          {categoryApps.map(app => (
-                            <SortableAppCard
-                              key={app.id}
-                              id={app.id}
-                              app={app}
-                              style={activeConfig.appCardStyle}
-                              layout={activeConfig.appCardLayout}
-                              size={activeConfig.appCardSize}
-                              isEditMode={isEditMode}
-                              onOpenWorkspace={
-                                activeConfig.enableWorkspaceMode && !app.ignoreWorkspace
-                                  ? (appItem) => setActiveWorkspace(appItem)
-                                  : undefined
-                              }
-                            />
-                          ))}
-                        </div>
-                      </SortableContext>
-                    </DndContext>
-                  </section>
+              {(() => {
+                const visibleCategories = sortedCategories.filter(cat =>
+                  activeConfig.apps.some(a => a.categoryId === cat.id)
                 );
-              })}
+                const firstVisibleCatId = visibleCategories[0]?.id;
+
+                return sortedCategories.map(cat => {
+                  const categoryApps = activeConfig.apps.filter(a => a.categoryId === cat.id);
+                  if (categoryApps.length === 0) return null;
+
+                  return (
+                    <section key={cat.id} className="flex flex-col gap-5">
+                      <div className="relative group">
+                        <h2 className="text-xl font-semibold text-muted-foreground border-b border-border pb-2">
+                          {cat.name}
+                        </h2>
+                        {cat.id === firstVisibleCatId && (
+                          <div className="absolute bottom-0 left-0 w-full h-0 pointer-events-none z-50">
+                            {(activeConfig.showDesktopPet !== false && (activeConfig.desktopPetType === 'bmo' || activeConfig.desktopPetType === 'both' || !activeConfig.desktopPetType)) && <DesktopPet petType="bmo" />}
+                            {(activeConfig.showDesktopPet !== false && (activeConfig.desktopPetType === 'coffee_mug' || activeConfig.desktopPetType === 'both')) && <DesktopPet petType="coffee_mug" />}
+                          </div>
+                        )}
+                      </div>
+                      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleAppReorder(cat.id, e)}>
+                        <SortableContext items={categoryApps.map(a => a.id)} strategy={rectSortingStrategy}>
+                          <div className={`grid gap-6 ${activeConfig.appCardLayout === 'list' ? 'grid-cols-1' : activeConfig.appCardLayout === 'minimal' ? 'grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12' : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'}`}>
+                            {categoryApps.map(app => (
+                              <SortableAppCard
+                                key={app.id}
+                                id={app.id}
+                                app={app}
+                                style={activeConfig.appCardStyle}
+                                layout={activeConfig.appCardLayout}
+                                size={activeConfig.appCardSize}
+                                isEditMode={isEditMode}
+                                onOpenWorkspace={
+                                  activeConfig.enableWorkspaceMode && !app.ignoreWorkspace
+                                    ? (appItem) => setActiveWorkspace(appItem)
+                                    : undefined
+                                }
+                              />
+                            ))}
+                          </div>
+                        </SortableContext>
+                      </DndContext>
+                    </section>
+                  );
+                });
+              })()}
             </div>
           </main>
 
@@ -451,7 +464,7 @@ function App() {
         </div>
       </div>
     </>
-  )
+  );
 }
 
 export default App;
