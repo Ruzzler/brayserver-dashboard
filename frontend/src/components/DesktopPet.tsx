@@ -130,7 +130,7 @@ export function DesktopPet({ petType = "bmo" }: { petType?: "bmo" | "coffee_mug"
                         <div
                             className={`${entity.type}-sprite ${entity.state === 'walk' ? 'pet-walk' : 'pet-idle'}`}
                             style={{
-                                backgroundImage: `url('/pets/${entity.type}_${entity.state === 'walk' ? 'walk' : 'idle'}.png')`,
+                                backgroundImage: `url('${import.meta.env.BASE_URL}pets/${entity.type}_${entity.state === 'walk' ? 'walk' : 'idle'}.png')`,
                                 transformOrigin: 'bottom center'
                             }}
                         />
