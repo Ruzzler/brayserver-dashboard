@@ -20,6 +20,15 @@ const PET_COLORS: Record<string, string> = {
     'C': '#60a5fa', // Sleep Zzzs
 };
 
+const COFFEE_COLORS: Record<string, string> = {
+    'W': '#f8fafc', // Body white
+    'A': '#0d9488', // Teal arms/legs
+    'B': '#0f172a', // Outline / eyes
+    'I': '#334155', // Inner mug dark
+    'C': '#9f1239', // Coffee splash (reddish)
+    'S': '#cbd5e1', // Shadow
+};
+
 const PET_FRAMES = {
     idle: [
         "                ",
@@ -221,26 +230,231 @@ const PET_FRAMES = {
     ],
 };
 
-const PixelFrame = ({ frame, flipX = false }: { frame: string[], flipX?: boolean }) => {
+const COFFEE_FRAMES: Record<string, string[]> = {
+    idle: [
+        "                ",
+        "   BBBBBBBBBB   ",
+        "  BIIIIIIIIIIB  ",
+        "  BWWWWWWWWWWBB ",
+        "  BWWWWWWWWWW WB",
+        "  BWWWBWWWBWWB B",
+        " ABWWWBWBWWBW B ",
+        "AAAWWWWWWWWWW B ",
+        " ABWWWWWWWWWWBB ",
+        "  BBBBBBBBBBBB  ",
+        "    A      A    ",
+        "   AAA    AAA   ",
+        "                ",
+        "                ",
+        "                ",
+        "                "
+    ],
+    blink: [
+        "                ",
+        "   BBBBBBBBBB   ",
+        "  BIIIIIIIIIIB  ",
+        "  BWWWWWWWWWWBB ",
+        "  BWWWWWWWWWW WB",
+        "  BWWWWWWWWWWB B",
+        " ABWWWWWWWWWW B ",
+        "AAAWWWWWWWWWW B ",
+        " ABWWWWWWWWWWBB ",
+        "  BBBBBBBBBBBB  ",
+        "    A      A    ",
+        "   AAA    AAA   ",
+        "                ",
+        "                ",
+        "                ",
+        "                "
+    ],
+    look_left: [
+        "                ",
+        "   BBBBBBBBBB   ",
+        "  BIIIIIIIIIIB  ",
+        "  BWWWWWWWWWWBB ",
+        "  BWWWWWWWWWW WB",
+        "  BWWBWWWBWBWB B",
+        " ABWWWBWBWWBW B ",
+        "AAAWWWWWWWWWW B ",
+        " ABWWWWWWWWWWBB ",
+        "  BBBBBBBBBBBB  ",
+        "    A      A    ",
+        "   AAA    AAA   ",
+        "                ",
+        "                ",
+        "                ",
+        "                "
+    ],
+    look_right: [
+        "                ",
+        "   BBBBBBBBBB   ",
+        "  BIIIIIIIIIIB  ",
+        "  BWWWWWWWWWWBB ",
+        "  BWWWWWWWWWW WB",
+        "  BWWWWBWWWBWW B",
+        " ABWWWWWBWBWW B ",
+        "AAAWWWWWWWWWW B ",
+        " ABWWWWWWWWWWBB ",
+        "  BBBBBBBBBBBB  ",
+        "    A      A    ",
+        "   AAA    AAA   ",
+        "                ",
+        "                ",
+        "                ",
+        "                "
+    ],
+    walk1: [
+        "                ",
+        "   BBBBBBBBBB   ",
+        "  BIIIIIIIIIIB  ",
+        "  BWWWWWWWWWWBB ",
+        "  BWWWWWWWWWW WB",
+        "  BWWWBWWWBWWB B",
+        "  BWWWBWBWWBW B ",
+        " ABWWWWWWWWWW B ",
+        "AAAWWWWWWWWWWBB ",
+        " ABBBBBBBBBBBB  ",
+        "    AA     A    ",
+        "   AAA      AA  ",
+        "                ",
+        "                ",
+        "                ",
+        "                "
+    ],
+    walk2: [
+        "                ",
+        "   BBBBBBBBBB   ",
+        "  BIIIIIIIIIIB  ",
+        "  BWWWWWWWWWWBB ",
+        "  BWWWWWWWWWW WB",
+        "  BWWWBWWWBWWB B",
+        " ABWWWBWBWWBW B ",
+        "AAAWWWWWWWWWW B ",
+        " ABWWWWWWWWWWBB ",
+        "  BBBBBBBBBBBB  ",
+        "    A      AA   ",
+        "   AA       AA  ",
+        "                ",
+        "                ",
+        "                ",
+        "                "
+    ],
+    happy: [
+        "      CCC       ",
+        "     CCCCC      ",
+        "    CCIIIIC     ",
+        "  BCCCCIIIICCB  ",
+        "  BCWWWWWWWWCCB ",
+        "  BWWWWWWWWWW WB",
+        " ABWWBBWWWBBWB B",
+        "AAAWWWBWBWWBW B ",
+        " ABWWWWWWWWWWBB ",
+        "  BBBBBBBBBBBB  ",
+        "   AAA    AAA   ",
+        "    A      A    ",
+        "                ",
+        "                ",
+        "                ",
+        "                "
+    ],
+    inflate1: [ // Used for coffee idle task
+        "                ",
+        "      A         ",
+        "     A     A    ",
+        "   BBBBBBBBBB   ",
+        "  BIIIIIIIIIIB  ",
+        "  BWWWWWWWWWWBB ",
+        "  BWWWBWWWBWWB B",
+        "  BWWWBWBWWBW B ",
+        "  BWWWWWWWWWWBB ",
+        "  BBBBBBBBBBBB  ",
+        "    A      A    ",
+        "   AAA    AAA   ",
+        "                ",
+        "                ",
+        "                ",
+        "                "
+    ],
+    inflate2: [
+        "                ",
+        "   BBBBBBBBBB   ",
+        "  BIIIIIIIIIIB  ",
+        "  BWWWWWWWWWWBB ",
+        "  BWWWWWWWWWW WB",
+        "  BWWWBWWWBWWB B",
+        "  BWWWBWBWWBW B ",
+        "  BWWWWWWWWWWBB ",
+        "  BBBBBBBBBBBB  ",
+        "    A      A    ",
+        "   AAA    AAA   ",
+        "                ",
+        "                ",
+        "                ",
+        "                ",
+        "                "
+    ],
+    water1: [ // Fallbacks so intervals don't crash
+        "                ",
+        "   BBBBBBBBBB   ",
+        "  BIIIIIIIIIIB  ",
+        "  BWWWWWWWWWWBB ",
+        "  BWWWWWWWWWW WB",
+        "  BWWWBWWWBWWB B",
+        " ABWWWBWBWWBW B ",
+        "AAAWWWWWWWWWW B ",
+        " ABWWWWWWWWWWBB ",
+        "  BBBBBBBBBBBB  ",
+        "    A      A    ",
+        "   AAA    AAA   ",
+        "                ",
+        "                ",
+        "                ",
+        "                "
+    ],
+    water2: [
+        "                ",
+        "   BBBBBBBBBB   ",
+        "  BIIIIIIIIIIB  ",
+        "  BWWWWWWWWWWBB ",
+        "  BWWWWWWWWWW WB",
+        "  BWWWBWWWBWWB B",
+        " ABWWWBWBWWBW B ",
+        "AAAWWWWWWWWWW B ",
+        " ABWWWWWWWWWWBB ",
+        "  BBBBBBBBBBBB  ",
+        "    A      A    ",
+        "   AAA    AAA   ",
+        "                ",
+        "                ",
+        "                ",
+        "                "
+    ]
+};
+
+const PixelFrame = ({ frame, flipX = false, mapping = PET_COLORS }: { frame: string[], flipX?: boolean, mapping?: Record<string, string> }) => {
     return (
-        <svg viewBox="0 0 16 16" className={`w-full h-full drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)] dark:drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)] ${flipX ? '-scale-x-100' : ''}`} style={{ shapeRendering: 'crispEdges' }}>
+        <svg viewBox="0 0 16 16" className={`w-full h-full drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)] dark:drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)] ${flipX ? '-scale-x-100' : ''} transition-transform duration-200`} style={{ shapeRendering: 'crispEdges' }}>
             {frame.map((row, y) =>
                 row.split('').map((char, x) => (
-                    PET_COLORS[char] ? <rect key={`${x}-${y}`} x={x} y={y} width="1.05" height="1.05" fill={PET_COLORS[char]} /> : null
+                    mapping[char] ? <rect key={`${x}-${y}`} x={x} y={y} width="1.05" height="1.05" fill={mapping[char]} /> : null
                 ))
             )}
         </svg>
     );
 };
 
-export function DesktopPet() {
+export function DesktopPet({ petType = "bmo" }: { petType?: "bmo" | "coffee_mug" }) {
     const [interactions, setInteractions] = useState(0);
     const [currentFrame, setCurrentFrame] = useState<keyof typeof PET_FRAMES>('idle');
-    const [position, setPosition] = useState(50); // percentage 0-100
+    const [position, setPosition] = useState(petType === 'bmo' ? 45 : 55); // percentage 0-100 (stagger initial positions)
     const [flipX, setFlipX] = useState(false);
 
     // Smooth transition toggle
     const [isWalking, setIsWalking] = useState(false);
+    const [walkDuration, setWalkDuration] = useState(0);
+
+    const activeFrames = petType === 'coffee_mug' ? COFFEE_FRAMES : PET_FRAMES;
+    const activeColors = petType === 'coffee_mug' ? COFFEE_COLORS : PET_COLORS;
 
     useEffect(() => {
         let timeout: NodeJS.Timeout;
@@ -259,9 +473,11 @@ export function DesktopPet() {
             // 30% chance to walk
             if (rand > 0.7) {
                 const step = Math.random() > 0.5 ? 1 : -1;
-                const dist = Math.floor(Math.random() * 15) + 5;
+                const dist = Math.floor(Math.random() * 20) + 10;
                 const newPos = Math.max(5, Math.min(95, position + (step * dist)));
 
+                const calcDuration = Math.abs(newPos - position) * 0.1; // 1s per 10% traveled
+                setWalkDuration(calcDuration);
                 setFlipX(step > 0);
                 setIsWalking(true);
 
@@ -270,7 +486,7 @@ export function DesktopPet() {
                 setPosition(newPos);
 
                 // Toggle feet while walking
-                let alternations = dist;
+                let alternations = Math.floor(calcDuration * 5); // Toggle every 200ms
                 const walkCycle = setInterval(() => {
                     setCurrentFrame(prev => prev === 'walk1' ? 'walk2' : 'walk1');
                     alternations--;
@@ -346,15 +562,15 @@ export function DesktopPet() {
             style={{
                 left: `${position}%`,
                 transform: 'translate(-50%, -100%)',
-                transition: isWalking ? 'left 2s linear' : 'none'
+                transition: isWalking ? `left ${walkDuration}s linear` : 'none'
             }}
         >
             <div
                 className="w-16 h-16 cursor-pointer pointer-events-auto group relative"
                 onClick={() => setInteractions(3)}
             >
-                <div className="absolute inset-0 z-10">
-                    <PixelFrame frame={PET_FRAMES[currentFrame]} flipX={flipX} />
+                <div className={`absolute inset-0 z-10 transition-transform duration-200 ${interactions === 0 && !isWalking ? 'hover:scale-110 hover:-translate-y-2' : ''}`}>
+                    <PixelFrame frame={activeFrames[currentFrame]} flipX={flipX} mapping={activeColors} />
                 </div>
 
                 {/* Hearts particle system wrapper */}
@@ -373,6 +589,6 @@ export function DesktopPet() {
                     ))}
                 </div>
             </div>
-        </div>
+        </div >
     );
 }

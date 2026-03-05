@@ -45,6 +45,7 @@ interface Config {
   apps: AppItem[];
   glanceWidgets?: GlanceWidget[];
   showDesktopPet?: boolean;
+  desktopPetType?: "bmo" | "coffee_mug" | "both";
 }
 
 function SortableAppCard({ id, app, style, layout, size, onOpenWorkspace, isEditMode }: { id: string, app: AppItem, style?: string, layout?: string, size?: string, onOpenWorkspace?: (app: AppItem) => void, isEditMode: boolean }) {
@@ -387,7 +388,8 @@ function App() {
           />
 
           <div className="relative w-full h-0 z-50">
-            {(activeConfig.showDesktopPet !== false) && <DesktopPet />}
+            {(activeConfig.showDesktopPet !== false && (activeConfig.desktopPetType === 'bmo' || activeConfig.desktopPetType === 'both' || !activeConfig.desktopPetType)) && <DesktopPet petType="bmo" />}
+            {(activeConfig.showDesktopPet !== false && (activeConfig.desktopPetType === 'coffee_mug' || activeConfig.desktopPetType === 'both')) && <DesktopPet petType="coffee_mug" />}
           </div>
 
           {activeConfig.glanceWidgets && activeConfig.glanceWidgets.length > 0 && (

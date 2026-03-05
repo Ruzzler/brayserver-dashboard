@@ -288,7 +288,21 @@ export function SettingsModal({ config, onSave, onPreviewConfig }: { config: any
                                             />
                                             <Label htmlFor="showDesktopPet" className="font-medium cursor-pointer">Enable Free-Roaming Desktop Pet</Label>
                                         </div>
-                                        <p className="text-xs text-muted-foreground mb-4">When enabled, BMO will wander across your dashboard header doing idle tasks.</p>
+                                        <div className="flex items-center justify-between mt-3 mb-2">
+                                            <Label htmlFor="desktopPetType" className="font-medium text-muted-foreground mr-4">Character Type</Label>
+                                            <select
+                                                id="desktopPetType"
+                                                value={localConfig.desktopPetType || 'bmo'}
+                                                onChange={(e) => handleGeneralChange('desktopPetType', e.target.value)}
+                                                className="flex h-9 w-[180px] items-center justify-between rounded-md border border-input bg-background/50 px-3 py-1 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+                                                disabled={localConfig.showDesktopPet === false}
+                                            >
+                                                <option value="bmo" className="bg-popover text-popover-foreground">BMO (Robot)</option>
+                                                <option value="coffee_mug" className="bg-popover text-popover-foreground">Coffee Mug</option>
+                                                <option value="both" className="bg-popover text-popover-foreground">Both (Party!)</option>
+                                            </select>
+                                        </div>
+                                        <p className="text-xs text-muted-foreground mb-4">When enabled, these little guys will wander across your dashboard header doing idle tasks.</p>
                                     </div>
                                 </div>
                             </CardContent>
