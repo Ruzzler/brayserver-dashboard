@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.5] - 2026-03-05
+
+### Added
+- **Latte Art Bowl (Pixel Art Sprite)**: Introduced the first character using the new high-resolution pixel art sprite engine. Includes a full 4-frame walk cycle and 2-frame idle animation with `image-rendering: pixelated` for crisp visuals.
+- **Shared PetWrapper Component**: Extracted core mascot logic (movement, emote bubbles, interaction) into a reusable wrapper, streamlining future character additions.
+- **Pixel Art Sprite Sheet Pipeline**: Established a robust system for converting AI-generated animation frames into game-ready horizontal sprite strips (`scripts/buildSpriteSheet.mjs`).
+- **Official Project Branching Strategy**: Formalized the use of `dev` for active work and `main` for stable releases to ensure a production-ready dashboard at all times.
+
+### Changed
+- **Settings Modal**: Updated the Character Type selection to feature the three finished high-res mascots (BMO, Original Mug, and Latte Art Bowl).
 ## [0.8.0] - 2026-03-05
 
 ### Security
