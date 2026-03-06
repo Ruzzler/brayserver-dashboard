@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.1] - 2026-03-05
+
+### Added
+- **6 New Coffee Pet Characters**: Latte Art Bowl, French Press, Espresso Shot, Pour Over, Takeout Cup, and Mocha Frappé — all selectable in Settings → Character Type.
+- **Shared PetWrapper Component**: Extracted autonomous movement, emote bubbles, and click interaction into a reusable wrapper (`PetWrapper.tsx`). All pets now use this shared logic.
+- **Pixel Art Sprite Sheet Pipeline**: Created `scripts/buildSpriteSheet.mjs` — processes AI-generated pixel art frames (removes green screen, resizes, stitches into horizontal sprite strips). Documented as a reusable skill at `.agent/skills/pixel-art-sprites/SKILL.md`.
+- **Latte Art Bowl (Sprite Version)**: First pet fully converted from SVG → pixel art sprite sheet with `image-rendering: pixelated` for crisp retro game aesthetic.
+
+### Changed
+- **Pet Rendering Architecture**: SVG pets use `PetWrapper` + inline vector graphics. Sprite-based pets use `PetWrapper` + CSS `steps()` sprite sheet animation. Both systems coexist.
+- **Settings Dropdown**: Expanded Character Type selector from 4 to 10 options.
+
 ## [0.8.0] - 2026-03-05
 
 ### Security

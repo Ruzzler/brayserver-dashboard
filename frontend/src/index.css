@@ -223,6 +223,51 @@
   }
 }
 
+/* ── Pixel Art Sprite Pets (128px frames) ── */
+.pixel-pet-sprite {
+  width: 80px;
+  height: 80px;
+  background-repeat: no-repeat;
+  background-size: auto 80px;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.pixel-pet-walk {
+  animation: pixel-pet-walk-4f 0.6s steps(4) infinite;
+}
+
+.pixel-pet-idle {
+  animation: pixel-pet-idle-2f 1.2s steps(2) infinite;
+}
+
+@keyframes pixel-pet-walk-4f {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: -320px 0;
+  }
+
+  /* 80px × 4 frames = 320px */
+}
+
+@keyframes pixel-pet-idle-2f {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: -160px 0;
+  }
+
+  /* 80px × 2 frames = 160px */
+}
+
+
 /* Emote / Thought Bubble */
 .emote-bubble {
   position: absolute;
