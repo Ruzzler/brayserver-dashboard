@@ -11,6 +11,7 @@ import { CommandPalette } from './components/CommandPalette';
 import { GlanceWidgetsRow } from './components/GlanceWidgets';
 import { AppCard } from './components/AppCard';
 import { DesktopPet } from './components/DesktopPet';
+import { CoffeeMugV2Pet } from './components/CoffeeMugV2Pet';
 
 import {
   DndContext,
@@ -202,6 +203,8 @@ function App() {
     (activeConfig.desktopPetType === 'bmo' || activeConfig.desktopPetType === 'both' || !activeConfig.desktopPetType);
   const showCoffee = activeConfig.showDesktopPet !== false &&
     (activeConfig.desktopPetType === 'coffee_mug' || activeConfig.desktopPetType === 'both');
+  const showMug2 = activeConfig.showDesktopPet !== false &&
+    activeConfig.desktopPetType === 'coffee_mug_v2';
 
   const visibleCategories = sortedCategories.filter(cat =>
     activeConfig.apps.some(a => a.categoryId === cat.id)
@@ -257,6 +260,7 @@ function App() {
                         <div className="absolute bottom-0 left-0 w-full h-0 pointer-events-none z-50">
                           {showBmo && <DesktopPet petType="bmo" />}
                           {showCoffee && <DesktopPet petType="coffee_mug" />}
+                          {showMug2 && <CoffeeMugV2Pet />}
                         </div>
                       )}
                     </div>
@@ -268,10 +272,10 @@ function App() {
                     >
                       <SortableContext items={categoryApps.map(a => a.id)} strategy={rectSortingStrategy}>
                         <div className={`grid gap-6 ${activeConfig.appCardLayout === 'list'
-                            ? 'grid-cols-1'
-                            : activeConfig.appCardLayout === 'minimal'
-                              ? 'grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12'
-                              : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
+                          ? 'grid-cols-1'
+                          : activeConfig.appCardLayout === 'minimal'
+                            ? 'grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12'
+                            : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
                           }`}>
                           {categoryApps.map(app => (
                             <SortableAppCard

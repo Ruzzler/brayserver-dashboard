@@ -48,7 +48,7 @@ export interface Config {
     apps: AppItem[];
     glanceWidgets?: GlanceWidget[];
     showDesktopPet?: boolean;
-    desktopPetType?: 'bmo' | 'coffee_mug' | 'both';
+    desktopPetType?: 'bmo' | 'coffee_mug' | 'coffee_mug_v2' | 'both';
     defaultSearchProvider?: string;
     apiKeys?: Record<string, string>;
 }

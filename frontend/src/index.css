@@ -183,6 +183,46 @@
   }
 }
 
+/* Mug2 sprite (24x24 @ scale 8 = 192x192px per frame, displayed at 96px) */
+.mug2-sprite {
+  width: 96px;
+  height: 96px;
+  background-repeat: no-repeat;
+  background-size: auto 96px;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.mug2-walk {
+  animation: sprite-walk-mug2 0.8s steps(4) infinite;
+}
+
+.mug2-idle {
+  animation: sprite-idle-mug2 1s steps(1) infinite;
+}
+
+@keyframes sprite-walk-mug2 {
+  0% {
+    background-position: 0px 0;
+  }
+
+  100% {
+    background-position: -384px 0;
+  }
+}
+
+@keyframes sprite-idle-mug2 {
+  0% {
+    background-position: 0px 0;
+  }
+
+  100% {
+    background-position: -96px 0;
+  }
+}
+
 /* Emote / Thought Bubble */
 .emote-bubble {
   position: absolute;

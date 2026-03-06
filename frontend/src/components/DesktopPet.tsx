@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 
-type EntityType = 'bmo' | 'coffee';
+type EntityType = 'bmo' | 'coffee' | 'mug2';
 type EntityState = 'idle' | 'walk' | 'blink' | 'water' | 'inflate';
 
 interface Entity {
@@ -18,7 +18,7 @@ interface Entity {
     emoteTimer: number;
 }
 
-export function DesktopPet({ petType = "bmo" }: { petType?: "bmo" | "coffee_mug" | "both" }) {
+export function DesktopPet({ petType = "bmo" }: { petType?: "bmo" | "coffee_mug" | "coffee_mug_v2" | "both" }) {
     const [entities, setEntities] = useState<Entity[]>([]);
     const requestRef = useRef<number>();
     const previousTimeRef = useRef<number>();
@@ -39,7 +39,7 @@ export function DesktopPet({ petType = "bmo" }: { petType?: "bmo" | "coffee_mug"
         } else {
             initialEntities.push({
                 id: 'pet-1',
-                type: petType === 'coffee_mug' ? 'coffee' : 'bmo',
+                type: petType === 'coffee_mug' ? 'coffee' : petType === 'coffee_mug_v2' ? 'mug2' : 'bmo',
                 x: 50, y: 0, targetX: 50, targetY: 0,
                 state: 'idle', flipX: false, speed: 0.12, waitTimer: 100, emoteTimer: 0
             });
@@ -128,7 +128,10 @@ export function DesktopPet({ petType = "bmo" }: { petType?: "bmo" | "coffee_mug"
                     )}
                     <div className={entity.flipX ? '-scale-x-100 transition-transform duration-200' : 'transition-transform duration-200'}>
                         <div
-                            className={`${entity.type}-sprite ${entity.state === 'walk' ? 'pet-walk' : 'pet-idle'}`}
+                            className={`${entity.type === 'mug2'
+                                    ? `mug2-sprite ${entity.state === 'walk' ? 'mug2-walk' : 'mug2-idle'}`
+                                    : `${entity.type}-sprite ${entity.state === 'walk' ? 'pet-walk' : 'pet-idle'}`
+                                }`}
                             style={{
                                 backgroundImage: `url('${import.meta.env.BASE_URL}pets/${entity.type}_${entity.state === 'walk' ? 'walk' : 'idle'}.png')`,
                                 transformOrigin: 'bottom center'

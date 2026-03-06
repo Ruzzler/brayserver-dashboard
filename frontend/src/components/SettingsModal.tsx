@@ -298,7 +298,8 @@ export function SettingsModal({ config, onSave, onPreviewConfig }: { config: any
                                                 disabled={localConfig.showDesktopPet === false}
                                             >
                                                 <option value="bmo" className="bg-popover text-popover-foreground">BMO (Robot)</option>
-                                                <option value="coffee_mug" className="bg-popover text-popover-foreground">Coffee Mug</option>
+                                                <option value="coffee_mug" className="bg-popover text-popover-foreground">Coffee Mug (Original)</option>
+                                                <option value="coffee_mug_v2" className="bg-popover text-popover-foreground">Coffee Mug v2 (Classic)</option>
                                                 <option value="both" className="bg-popover text-popover-foreground">Both (Mascot Party!)</option>
                                             </select>
                                         </div>
