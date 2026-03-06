@@ -300,6 +300,12 @@ export function SettingsModal({ config, onSave, onPreviewConfig }: { config: any
                                                 <option value="bmo" className="bg-popover text-popover-foreground">BMO (Robot)</option>
                                                 <option value="coffee_mug" className="bg-popover text-popover-foreground">Coffee Mug (Original)</option>
                                                 <option value="coffee_mug_v2" className="bg-popover text-popover-foreground">Coffee Mug v2 (Classic)</option>
+                                                <option value="latte_art" className="bg-popover text-popover-foreground">Latte Art Bowl</option>
+                                                <option value="french_press" className="bg-popover text-popover-foreground">French Press</option>
+                                                <option value="espresso_shot" className="bg-popover text-popover-foreground">Espresso Shot</option>
+                                                <option value="pour_over" className="bg-popover text-popover-foreground">Pour Over</option>
+                                                <option value="takeout_cup" className="bg-popover text-popover-foreground">Takeout Cup</option>
+                                                <option value="mocha_frappe" className="bg-popover text-popover-foreground">Mocha Frappé</option>
                                                 <option value="both" className="bg-popover text-popover-foreground">Both (Mascot Party!)</option>
                                             </select>
                                         </div>

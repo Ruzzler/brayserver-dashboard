@@ -12,6 +12,12 @@ import { GlanceWidgetsRow } from './components/GlanceWidgets';
 import { AppCard } from './components/AppCard';
 import { DesktopPet } from './components/DesktopPet';
 import { CoffeeMugV2Pet } from './components/CoffeeMugV2Pet';
+import { LatteArtPet } from './components/LatteArtPet';
+import { FrenchPressPet } from './components/FrenchPressPet';
+import { EspressoShotPet } from './components/EspressoShotPet';
+import { PourOverPet } from './components/PourOverPet';
+import { TakeoutCupPet } from './components/TakeoutCupPet';
+import { MochaFrappePet } from './components/MochaFrappePet';
 
 import {
   DndContext,
@@ -199,12 +205,22 @@ function App() {
     return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading Dashboard Data...</div>;
   }
 
-  const showBmo = activeConfig.showDesktopPet !== false &&
-    (activeConfig.desktopPetType === 'bmo' || activeConfig.desktopPetType === 'both' || !activeConfig.desktopPetType);
-  const showCoffee = activeConfig.showDesktopPet !== false &&
-    (activeConfig.desktopPetType === 'coffee_mug' || activeConfig.desktopPetType === 'both');
-  const showMug2 = activeConfig.showDesktopPet !== false &&
-    activeConfig.desktopPetType === 'coffee_mug_v2';
+  const petType = activeConfig.desktopPetType;
+  const showPets = activeConfig.showDesktopPet !== false;
+  const showBmo = showPets && (petType === 'bmo' || petType === 'both' || !petType);
+  const showCoffee = showPets && (petType === 'coffee_mug' || petType === 'both');
+
+  // Map of SVG pet types to their components
+  const svgPetMap: Record<string, React.FC> = {
+    coffee_mug_v2: CoffeeMugV2Pet,
+    latte_art: LatteArtPet,
+    french_press: FrenchPressPet,
+    espresso_shot: EspressoShotPet,
+    pour_over: PourOverPet,
+    takeout_cup: TakeoutCupPet,
+    mocha_frappe: MochaFrappePet,
+  };
+  const SvgPetComponent = showPets && petType ? svgPetMap[petType] : null;
 
   const visibleCategories = sortedCategories.filter(cat =>
     activeConfig.apps.some(a => a.categoryId === cat.id)
@@ -260,7 +276,7 @@ function App() {
                         <div className="absolute bottom-0 left-0 w-full h-0 pointer-events-none z-50">
                           {showBmo && <DesktopPet petType="bmo" />}
                           {showCoffee && <DesktopPet petType="coffee_mug" />}
-                          {showMug2 && <CoffeeMugV2Pet />}
+                          {SvgPetComponent && <SvgPetComponent />}
                         </div>
                       )}
                     </div>
