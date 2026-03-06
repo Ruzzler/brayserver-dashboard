@@ -5,17 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.8.1] - 2026-03-05
+## [0.8.5] - 2026-03-05
 
 ### Added
-- **6 New Coffee Pet Characters**: Latte Art Bowl, French Press, Espresso Shot, Pour Over, Takeout Cup, and Mocha Frappé — all selectable in Settings → Character Type.
-- **Shared PetWrapper Component**: Extracted autonomous movement, emote bubbles, and click interaction into a reusable wrapper (`PetWrapper.tsx`). All pets now use this shared logic.
-- **Pixel Art Sprite Sheet Pipeline**: Created `scripts/buildSpriteSheet.mjs` — processes AI-generated pixel art frames (removes green screen, resizes, stitches into horizontal sprite strips). Documented as a reusable skill at `.agent/skills/pixel-art-sprites/SKILL.md`.
-- **Latte Art Bowl (Sprite Version)**: First pet fully converted from SVG → pixel art sprite sheet with `image-rendering: pixelated` for crisp retro game aesthetic.
+- **Latte Art Bowl (Pixel Art Sprite)**: Introduced the first character using the new high-resolution pixel art sprite engine. Includes a full 4-frame walk cycle and 2-frame idle animation with `image-rendering: pixelated` for crisp visuals.
+- **Shared PetWrapper Component**: Extracted core mascot logic (movement, emote bubbles, interaction) into a reusable wrapper, streamlining future character additions.
+- **Pixel Art Sprite Sheet Pipeline**: Established a robust system for converting AI-generated animation frames into game-ready horizontal sprite strips (`scripts/buildSpriteSheet.mjs`).
+- **Official Project Branching Strategy**: Formalized the use of `dev` for active work and `main` for stable releases to ensure a production-ready dashboard at all times.
 
 ### Changed
-- **Pet Rendering Architecture**: SVG pets use `PetWrapper` + inline vector graphics. Sprite-based pets use `PetWrapper` + CSS `steps()` sprite sheet animation. Both systems coexist.
-- **Settings Dropdown**: Expanded Character Type selector from 4 to 10 options.
+- **Settings Modal**: Updated the Character Type selection to feature the three finished high-res mascots (BMO, Original Mug, and Latte Art Bowl).
+
 
 ## [0.8.0] - 2026-03-05
 

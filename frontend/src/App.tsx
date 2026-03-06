@@ -13,11 +13,6 @@ import { AppCard } from './components/AppCard';
 import { DesktopPet } from './components/DesktopPet';
 import { CoffeeMugV2Pet } from './components/CoffeeMugV2Pet';
 import { LatteArtPet } from './components/LatteArtPet';
-import { FrenchPressPet } from './components/FrenchPressPet';
-import { EspressoShotPet } from './components/EspressoShotPet';
-import { PourOverPet } from './components/PourOverPet';
-import { TakeoutCupPet } from './components/TakeoutCupPet';
-import { MochaFrappePet } from './components/MochaFrappePet';
 
 import {
   DndContext,
@@ -214,11 +209,6 @@ function App() {
   const svgPetMap: Record<string, React.FC> = {
     coffee_mug_v2: CoffeeMugV2Pet,
     latte_art: LatteArtPet,
-    french_press: FrenchPressPet,
-    espresso_shot: EspressoShotPet,
-    pour_over: PourOverPet,
-    takeout_cup: TakeoutCupPet,
-    mocha_frappe: MochaFrappePet,
   };
   const SvgPetComponent = showPets && petType ? svgPetMap[petType] : null;
 
